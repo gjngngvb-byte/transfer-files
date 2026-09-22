@@ -1,8 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Transfer Files</title>
 
   <style>
@@ -18,7 +20,7 @@
       justify-content: center;
       padding: 20px;
       background: #0f0f12;
-      color: #fff;
+      color: white;
       font-family: Arial, Helvetica, sans-serif;
     }
 
@@ -141,15 +143,22 @@
       letter-spacing: 4px;
     }
 
-    #downloadLink {
+    #downloadButton {
       display: inline-block;
       margin-top: 10px;
       padding: 13px 20px;
+      border: 0;
       border-radius: 12px;
       background: #22c55e;
       color: white;
       text-decoration: none;
       font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #downloadButton:hover {
+      background: #16a34a;
     }
 
     .copy-button {
@@ -160,6 +169,17 @@
       background: transparent;
       color: white;
       cursor: pointer;
+    }
+
+    .link-box {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #0f0f12;
+      font-size: 12px;
+      color: #888;
+      word-break: break-all;
+      text-align: left;
     }
   </style>
 </head>
@@ -177,7 +197,9 @@
 
     <label class="upload-area">
 
-      <div class="upload-icon">📁</div>
+      <div class="upload-icon">
+        📁
+      </div>
 
       <div class="upload-text">
         Escolha um arquivo
@@ -194,20 +216,26 @@
 
     </label>
 
+
     <div id="fileInfo"></div>
+
 
     <button id="sendButton">
       📤 Enviar arquivo
     </button>
 
+
     <div id="status"></div>
+
 
     <div id="resultBox">
 
-      <strong>✅ Arquivo enviado!</strong>
+      <strong>
+        ✅ Arquivo enviado!
+      </strong>
 
       <p>
-        Link para abrir no outro dispositivo:
+        Use este código no outro dispositivo:
       </p>
 
       <div
@@ -215,15 +243,19 @@
         class="code">
       </div>
 
-      <a
-        id="downloadLink"
-        href="#"
-        target="_blank"
-        rel="noopener">
-        📥 Baixar arquivo
-      </a>
 
-      <br>
+      <!-- DOWNLOAD DIRETO -->
+
+      <button
+        id="downloadButton">
+        📥 Baixar arquivo
+      </button>
+
+
+      <p>
+        Ou copie o link:
+      </p>
+
 
       <button
         id="copyButton"
@@ -231,16 +263,27 @@
         📋 Copiar link
       </button>
 
+
+      <div
+        id="linkBox"
+        class="link-box">
+      </div>
+
     </div>
 
   </main>
 
 
-  <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
   <script>
+
+    /*
+     * ==========================================
+     * SUPABASE
+     * ==========================================
+     */
 
     const SUPABASE_URL =
       "https://rmplwgtizbqzmvabrbhe.supabase.co";
@@ -248,10 +291,6 @@
     const SUPABASE_KEY =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
 
-
-    /*
-     * SUPABASE
-     */
 
     const supabaseClient =
       window.supabase.createClient(
@@ -261,7 +300,9 @@
 
 
     /*
+     * ==========================================
      * ELEMENTOS
+     * ==========================================
      */
 
     const fileInput =
@@ -282,18 +323,27 @@
     const transferCode =
       document.getElementById("transferCode");
 
-    const downloadLink =
-      document.getElementById("downloadLink");
+    const downloadButton =
+      document.getElementById("downloadButton");
 
     const copyButton =
       document.getElementById("copyButton");
 
+    const linkBox =
+      document.getElementById("linkBox");
+
 
     let selectedFile = null;
 
+    let downloadUrl = null;
+
+    let originalFileName = null;
+
 
     /*
+     * ==========================================
      * ESCOLHER ARQUIVO
+     * ==========================================
      */
 
     fileInput.addEventListener(
@@ -303,6 +353,7 @@
         selectedFile =
           fileInput.files[0];
 
+
         if (!selectedFile) {
           return;
         }
@@ -311,32 +362,47 @@
         let tamanho =
           selectedFile.size;
 
+
         let tamanhoTexto;
 
 
-        if (tamanho < 1024 * 1024) {
+        if (
+          tamanho < 1024 * 1024
+        ) {
 
           tamanhoTexto =
-            (tamanho / 1024).toFixed(2) +
-            " KB";
+            (tamanho / 1024).toFixed(2)
+            + " KB";
 
         } else {
 
           tamanhoTexto =
-            (tamanho / 1024 / 1024).toFixed(2) +
-            " MB";
+            (tamanho / 1024 / 1024).toFixed(2)
+            + " MB";
         }
 
 
         fileInfo.innerHTML = `
-          <strong>${escapeHtml(selectedFile.name)}</strong>
+
+          <strong>
+            ${escapeHtml(
+              selectedFile.name
+            )}
+          </strong>
+
           <br><br>
-          Tamanho: ${tamanhoTexto}
+
+          Tamanho:
+          ${tamanhoTexto}
+
           <br>
-          Tipo: ${escapeHtml(
+
+          Tipo:
+          ${escapeHtml(
             selectedFile.type ||
             "desconhecido"
           )}
+
         `;
 
 
@@ -370,7 +436,9 @@
 
 
     /*
-     * ENVIAR
+     * ==========================================
+     * ENVIAR ARQUIVO
+     * ==========================================
      */
 
     sendButton.addEventListener(
@@ -392,8 +460,6 @@
         status.textContent =
           "Enviando arquivo...";
 
-        status.className = "";
-
 
         try {
 
@@ -406,11 +472,17 @@
 
 
           /*
-           * CAMINHO DO ARQUIVO
+           * CAMINHO
            */
 
           const caminho =
-            id + "/" + selectedFile.name;
+            id +
+            "/" +
+            selectedFile.name;
+
+
+          originalFileName =
+            selectedFile.name;
 
 
           console.log(
@@ -452,8 +524,6 @@
 
           /*
            * LINK TEMPORÁRIO
-           *
-           * 24 HORAS
            */
 
           const signed =
@@ -471,7 +541,7 @@
           }
 
 
-          const url =
+          downloadUrl =
             signed.data.signedUrl;
 
 
@@ -490,9 +560,17 @@
             codigo;
 
 
-          downloadLink.href =
-            url;
+          /*
+           * MOSTRA LINK
+           */
 
+          linkBox.textContent =
+            downloadUrl;
+
+
+          /*
+           * MOSTRA RESULTADO
+           */
 
           resultBox.style.display =
             "block";
@@ -500,6 +578,7 @@
 
           status.textContent =
             "✅ Arquivo enviado com sucesso!";
+
 
           status.className =
             "success";
@@ -510,8 +589,8 @@
 
 
           console.log(
-            "Link criado:",
-            url
+            "Link:",
+            downloadUrl
           );
 
         } catch (error) {
@@ -528,6 +607,7 @@
               error.message ||
               "Erro desconhecido"
             );
+
 
           status.className =
             "error";
@@ -546,17 +626,170 @@
 
 
     /*
+     * ==========================================
+     * DOWNLOAD DIRETO
+     * ==========================================
+     */
+
+    downloadButton.addEventListener(
+      "click",
+      async function () {
+
+        if (!downloadUrl) {
+          return;
+        }
+
+
+        downloadButton.disabled =
+          true;
+
+
+        downloadButton.textContent =
+          "⏳ Baixando...";
+
+
+        try {
+
+          /*
+           * PEGA O ARQUIVO
+           */
+
+          const resposta =
+            await fetch(
+              downloadUrl
+            );
+
+
+          if (!resposta.ok) {
+
+            throw new Error(
+              "Não foi possível baixar o arquivo."
+            );
+          }
+
+
+          /*
+           * TRANSFORMA EM BLOB
+           */
+
+          const blob =
+            await resposta.blob();
+
+
+          /*
+           * CRIA DOWNLOAD LOCAL
+           */
+
+          const blobUrl =
+            URL.createObjectURL(
+              blob
+            );
+
+
+          const link =
+            document.createElement("a");
+
+
+          link.href =
+            blobUrl;
+
+
+          link.download =
+            originalFileName ||
+            "arquivo";
+
+
+          document.body.appendChild(
+            link
+          );
+
+
+          link.click();
+
+
+          link.remove();
+
+
+          /*
+           * LIBERA MEMÓRIA
+           */
+
+          setTimeout(
+            function () {
+
+              URL.revokeObjectURL(
+                blobUrl
+              );
+
+            },
+            1000
+          );
+
+
+          downloadButton.textContent =
+            "✅ Baixado!";
+
+
+        } catch (error) {
+
+          console.error(
+            "Erro no download:",
+            error
+          );
+
+
+          /*
+           * FALLBACK
+           */
+
+          window.open(
+            downloadUrl,
+            "_blank"
+          );
+
+
+          downloadButton.textContent =
+            "📥 Baixar arquivo";
+
+        }
+
+
+        setTimeout(
+          function () {
+
+            downloadButton.disabled =
+              false;
+
+            downloadButton.textContent =
+              "📥 Baixar arquivo";
+
+          },
+          2000
+        );
+
+      }
+    );
+
+
+    /*
+     * ==========================================
      * COPIAR LINK
+     * ==========================================
      */
 
     copyButton.addEventListener(
       "click",
       async function () {
 
+        if (!downloadUrl) {
+          return;
+        }
+
+
         try {
 
           await navigator.clipboard.writeText(
-            downloadLink.href
+            downloadUrl
           );
 
 
@@ -574,11 +807,13 @@
             2000
           );
 
+
         } catch (error) {
 
           alert(
             "Não foi possível copiar o link."
           );
+
         }
 
       }
@@ -586,7 +821,9 @@
 
 
     /*
-     * EVITA HTML INJETADO
+     * ==========================================
+     * ESCAPE HTML
+     * ==========================================
      */
 
     function escapeHtml(text) {
@@ -602,10 +839,11 @@
 
 
     console.log(
-      "Transfer Files iniciado corretamente."
+      "Transfer Files iniciado."
     );
 
   </script>
 
 </body>
 </html>
+```
