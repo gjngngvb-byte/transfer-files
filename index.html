@@ -1,10 +1,8 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Transfer Files</title>
 
   <style>
@@ -16,13 +14,11 @@
       margin: 0;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       padding: 20px;
-
       background: #0f0f12;
-      color: white;
-
+      color: #fff;
       font-family: Arial, Helvetica, sans-serif;
     }
 
@@ -45,9 +41,9 @@
 
     .upload-area {
       display: block;
+      padding: 45px 20px;
       border: 2px dashed #444;
       border-radius: 20px;
-      padding: 45px 20px;
       cursor: pointer;
       transition: 0.2s;
     }
@@ -63,13 +59,9 @@
     }
 
     .upload-text {
+      margin-bottom: 20px;
       font-size: 18px;
       font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    input[type="file"] {
-      display: none;
     }
 
     .select-button {
@@ -77,8 +69,11 @@
       padding: 14px 25px;
       border-radius: 12px;
       background: #8b5cf6;
-      color: white;
       font-weight: bold;
+    }
+
+    input[type="file"] {
+      display: none;
     }
 
     #fileInfo {
@@ -96,16 +91,12 @@
       width: 100%;
       margin-top: 15px;
       padding: 16px;
-
       border: 0;
       border-radius: 12px;
-
       background: #8b5cf6;
       color: white;
-
       font-size: 16px;
       font-weight: bold;
-
       cursor: pointer;
     }
 
@@ -124,6 +115,14 @@
       color: #aaa;
     }
 
+    .success {
+      color: #22c55e !important;
+    }
+
+    .error {
+      color: #ef4444 !important;
+    }
+
     #resultBox {
       display: none;
       margin-top: 25px;
@@ -135,10 +134,8 @@
     .code {
       margin: 15px 0;
       padding: 15px;
-
       border-radius: 12px;
       background: #0f0f12;
-
       font-size: 28px;
       font-weight: bold;
       letter-spacing: 4px;
@@ -148,12 +145,9 @@
       display: inline-block;
       margin-top: 10px;
       padding: 13px 20px;
-
       border-radius: 12px;
-
       background: #22c55e;
       color: white;
-
       text-decoration: none;
       font-weight: bold;
     }
@@ -161,22 +155,11 @@
     .copy-button {
       margin-top: 10px;
       padding: 10px 15px;
-
       border: 1px solid #444;
       border-radius: 10px;
-
       background: transparent;
       color: white;
-
       cursor: pointer;
-    }
-
-    .error {
-      color: #ef4444 !important;
-    }
-
-    .success {
-      color: #22c55e !important;
     }
   </style>
 </head>
@@ -192,12 +175,9 @@
       e baixe exatamente o mesmo arquivo em outro.
     </p>
 
-    <!-- ÁREA DE SELEÇÃO -->
     <label class="upload-area">
 
-      <div class="upload-icon">
-        📁
-      </div>
+      <div class="upload-icon">📁</div>
 
       <div class="upload-text">
         Escolha um arquivo
@@ -214,28 +194,20 @@
 
     </label>
 
-
-    <!-- INFORMAÇÕES DO ARQUIVO -->
     <div id="fileInfo"></div>
 
-
-    <!-- BOTÃO DE ENVIO -->
     <button id="sendButton">
       📤 Enviar arquivo
     </button>
 
-
-    <!-- STATUS -->
     <div id="status"></div>
 
-
-    <!-- RESULTADO -->
     <div id="resultBox">
 
       <strong>✅ Arquivo enviado!</strong>
 
       <p>
-        Use este código no outro dispositivo:
+        Link para abrir no outro dispositivo:
       </p>
 
       <div
@@ -265,31 +237,31 @@
 
 
   <!-- SUPABASE -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
   <script>
-
-    /*
-     * ==========================================
-     * CONFIGURAÇÃO
-     * ==========================================
-     */
 
     const SUPABASE_URL =
       "https://rmplwgtizbqzmvabrbhe.supabase.co";
 
     const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIiwicmVmIjoicm1wbHdn dGl6YnF6bXZhYnJi aGUiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc5MDEwMjk3MiwiZXhwIjoyMTA1Njc4OTcyfQ.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw"
-        .replaceAll(" ", "");
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
 
 
     /*
-     * ==========================================
+     * SUPABASE
+     */
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /*
      * ELEMENTOS
-     * ==========================================
      */
 
     const fileInput =
@@ -321,62 +293,7 @@
 
 
     /*
-     * ==========================================
-     * SUPABASE
-     * ==========================================
-     */
-
-    let supabaseClient = null;
-
-
-    function iniciarSupabase() {
-
-      try {
-
-        if (
-          typeof window.supabase === "undefined"
-        ) {
-
-          console.error(
-            "Supabase não foi carregado."
-          );
-
-          return false;
-        }
-
-
-        supabaseClient =
-          window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-          );
-
-
-        console.log(
-          "Supabase conectado."
-        );
-
-        return true;
-
-      } catch (error) {
-
-        console.error(
-          "Erro ao iniciar Supabase:",
-          error
-        );
-
-        return false;
-      }
-    }
-
-
-    iniciarSupabase();
-
-
-    /*
-     * ==========================================
      * ESCOLHER ARQUIVO
-     * ==========================================
      */
 
     fileInput.addEventListener(
@@ -386,80 +303,62 @@
         selectedFile =
           fileInput.files[0];
 
-
         if (!selectedFile) {
-
           return;
         }
-
-
-        /*
-         * MOSTRA AS INFORMAÇÕES
-         */
-
-        fileInfo.style.display =
-          "block";
 
 
         let tamanho =
           selectedFile.size;
 
-
         let tamanhoTexto;
 
 
-        if (
-          tamanho < 1024 * 1024
-        ) {
+        if (tamanho < 1024 * 1024) {
 
           tamanhoTexto =
-            (tamanho / 1024).toFixed(2)
-            + " KB";
+            (tamanho / 1024).toFixed(2) +
+            " KB";
 
         } else {
 
           tamanhoTexto =
-            (tamanho / 1024 / 1024).toFixed(2)
-            + " MB";
+            (tamanho / 1024 / 1024).toFixed(2) +
+            " MB";
         }
 
 
         fileInfo.innerHTML = `
-
-          <strong>
-            ${escapeHtml(selectedFile.name)}
-          </strong>
-
+          <strong>${escapeHtml(selectedFile.name)}</strong>
           <br><br>
-
-          Tamanho:
-          ${tamanhoTexto}
-
+          Tamanho: ${tamanhoTexto}
           <br>
-
-          Tipo:
-          ${escapeHtml(
+          Tipo: ${escapeHtml(
             selectedFile.type ||
             "desconhecido"
           )}
-
         `;
 
 
-        /*
-         * MOSTRA O BOTÃO
-         */
+        fileInfo.style.display =
+          "block";
+
 
         sendButton.style.display =
           "block";
 
 
-        /*
-         * LIMPA ESTADO ANTERIOR
-         */
+        sendButton.disabled =
+          false;
+
+
+        sendButton.textContent =
+          "📤 Enviar arquivo";
+
 
         resultBox.style.display =
           "none";
+
 
         status.textContent =
           "Arquivo pronto para envio.";
@@ -471,9 +370,7 @@
 
 
     /*
-     * ==========================================
-     * ENVIAR ARQUIVO
-     * ==========================================
+     * ENVIAR
      */
 
     sendButton.addEventListener(
@@ -481,19 +378,6 @@
       async function () {
 
         if (!selectedFile) {
-
-          return;
-        }
-
-
-        if (!supabaseClient) {
-
-          status.textContent =
-            "❌ Supabase não foi carregado.";
-
-          status.className =
-            "error";
-
           return;
         }
 
@@ -504,6 +388,7 @@
         sendButton.textContent =
           "⏳ Enviando...";
 
+
         status.textContent =
           "Enviando arquivo...";
 
@@ -513,7 +398,7 @@
         try {
 
           /*
-           * GERA UM ID ÚNICO
+           * ID ÚNICO
            */
 
           const id =
@@ -521,13 +406,11 @@
 
 
           /*
-           * NOME DO ARQUIVO NO STORAGE
+           * CAMINHO DO ARQUIVO
            */
 
           const caminho =
-            id +
-            "/" +
-            selectedFile.name;
+            id + "/" + selectedFile.name;
 
 
           console.log(
@@ -537,14 +420,10 @@
 
 
           /*
-           * ENVIA OS BYTES ORIGINAIS
-           *
-           * O arquivo não é convertido.
-           * Não é comprimido.
-           * Não é redimensionado.
+           * UPLOAD
            */
 
-          const resultado =
+          const upload =
             await supabaseClient
               .storage
               .from("files")
@@ -553,9 +432,7 @@
                 selectedFile,
                 {
                   cacheControl: "3600",
-
                   upsert: false,
-
                   contentType:
                     selectedFile.type ||
                     "application/octet-stream"
@@ -563,16 +440,20 @@
               );
 
 
-          if (resultado.error) {
-
-            throw resultado.error;
+          if (upload.error) {
+            throw upload.error;
           }
 
 
+          console.log(
+            "Upload concluído."
+          );
+
+
           /*
-           * GERA LINK TEMPORÁRIO
+           * LINK TEMPORÁRIO
            *
-           * Válido por 1 hora.
+           * 24 HORAS
            */
 
           const signed =
@@ -581,12 +462,11 @@
               .from("files")
               .createSignedUrl(
                 caminho,
-                3600
+                86400
               );
 
 
           if (signed.error) {
-
             throw signed.error;
           }
 
@@ -596,11 +476,13 @@
 
 
           /*
-           * CRIA CÓDIGO
+           * CÓDIGO
            */
 
           const codigo =
-            id.substring(0, 8)
+            id
+              .replaceAll("-", "")
+              .substring(0, 8)
               .toUpperCase();
 
 
@@ -628,8 +510,8 @@
 
 
           console.log(
-            "Arquivo enviado:",
-            caminho
+            "Link criado:",
+            url
           );
 
         } catch (error) {
@@ -641,7 +523,7 @@
 
 
           status.textContent =
-            "❌ Erro ao enviar: " +
+            "❌ " +
             (
               error.message ||
               "Erro desconhecido"
@@ -654,6 +536,7 @@
           sendButton.disabled =
             false;
 
+
           sendButton.textContent =
             "📤 Enviar arquivo";
         }
@@ -663,9 +546,7 @@
 
 
     /*
-     * ==========================================
      * COPIAR LINK
-     * ==========================================
      */
 
     copyButton.addEventListener(
@@ -693,13 +574,11 @@
             2000
           );
 
-
         } catch (error) {
 
           alert(
             "Não foi possível copiar o link."
           );
-
         }
 
       }
@@ -707,9 +586,7 @@
 
 
     /*
-     * ==========================================
-     * SEGURANÇA DO NOME
-     * ==========================================
+     * EVITA HTML INJETADO
      */
 
     function escapeHtml(text) {
@@ -724,18 +601,11 @@
     }
 
 
-    /*
-     * ==========================================
-     * TESTE
-     * ==========================================
-     */
-
     console.log(
-      "Transfer Files carregado."
+      "Transfer Files iniciado corretamente."
     );
 
   </script>
 
 </body>
 </html>
-```
