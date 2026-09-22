@@ -6,6 +6,8 @@
 
     <title>Transfer Files</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -24,7 +26,7 @@
         }
 
         .container {
-            width: min(90%, 500px);
+            width: min(90%, 520px);
             text-align: center;
         }
 
@@ -35,10 +37,11 @@
 
         p {
             color: #999;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .upload {
+            display: block;
             border: 2px dashed #444;
             border-radius: 20px;
             padding: 50px 20px;
@@ -63,7 +66,7 @@
 
         .button {
             display: inline-block;
-            margin-top: 25px;
+            margin-top: 20px;
             padding: 14px 25px;
             border-radius: 12px;
             background: #8b5cf6;
@@ -73,10 +76,15 @@
 
         .file {
             margin-top: 25px;
-            padding: 15px;
+            padding: 20px;
             background: #18181d;
             border-radius: 12px;
             display: none;
+        }
+
+        .status {
+            margin-top: 20px;
+            color: #aaa;
         }
     </style>
 </head>
@@ -88,7 +96,7 @@
         <h1>Transfer Files</h1>
 
         <p>
-            Envie um arquivo de um dispositivo e baixe em outro.
+            Transfira arquivos entre seus dispositivos.
         </p>
 
         <label class="upload">
@@ -107,13 +115,28 @@
 
         <div class="file" id="fileInfo"></div>
 
+        <div class="status" id="status"></div>
+
     </main>
 
     <script>
+
+        const SUPABASE_URL =
+            "https://rmplwgtizbqzmvabrbhe.supabase.co/rest/v1/";
+
+        const SUPABASE_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
+
+        const supabase = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
         const input = document.getElementById("fileInput");
         const fileInfo = document.getElementById("fileInfo");
+        const status = document.getElementById("status");
 
-        input.addEventListener("change", () => {
+        input.addEventListener("change", async () => {
 
             const file = input.files[0];
 
@@ -126,7 +149,34 @@
                 <br>
                 ${(file.size / 1024 / 1024).toFixed(2)} MB
             `;
+
+            status.textContent = "Enviando arquivo...";
+
+            const nomeUnico =
+                crypto.randomUUID() + "-" + file.name;
+
+            const { data, error } =
+                await supabase.storage
+                    .from("files")
+                    .upload(nomeUnico, file);
+
+            if (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    "Erro ao enviar: " + error.message;
+
+                return;
+            }
+
+            status.textContent =
+                "Arquivo enviado com sucesso!";
+
+            console.log(data);
+
         });
+
     </script>
 
 </body>
