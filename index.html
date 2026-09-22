@@ -2,500 +2,739 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Transfer Files</title>
+  <title>Transfer Files</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #0f0f12;
-            color: white;
-        }
+      background: #0f0f12;
+      color: white;
 
-        .container {
-            width: 100%;
-            max-width: 520px;
-            text-align: center;
-        }
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-        h1 {
-            margin: 0;
-            font-size: 42px;
-        }
+    .container {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
 
-        .subtitle {
-            margin: 12px 0 35px;
-            color: #999;
-            line-height: 1.5;
-        }
+    h1 {
+      margin: 0;
+      font-size: 42px;
+    }
 
-        .upload-area {
-            display: block;
-            border: 2px dashed #444;
-            border-radius: 20px;
-            padding: 50px 20px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+    .subtitle {
+      margin: 12px 0 30px;
+      color: #999;
+      line-height: 1.5;
+    }
 
-        .upload-area:hover {
-            border-color: #8b5cf6;
-            background: #15151b;
-        }
+    .upload-area {
+      display: block;
+      border: 2px dashed #444;
+      border-radius: 20px;
+      padding: 45px 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-        .upload-icon {
-            font-size: 55px;
-            margin-bottom: 15px;
-        }
+    .upload-area:hover {
+      border-color: #8b5cf6;
+      background: #15151b;
+    }
 
-        .upload-text {
-            font-size: 18px;
-            font-weight: bold;
-        }
+    .upload-icon {
+      font-size: 55px;
+      margin-bottom: 15px;
+    }
 
-        input[type="file"] {
-            display: none;
-        }
+    .upload-text {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
 
-        .button,
-        #sendButton,
-        #downloadLink,
-        .copy-button {
-            border-radius: 12px;
-        }
+    input[type="file"] {
+      display: none;
+    }
 
-        .button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 14px 25px;
-            background: #8b5cf6;
-            color: white;
-            font-weight: bold;
-        }
+    .select-button {
+      display: inline-block;
+      padding: 14px 25px;
+      border-radius: 12px;
+      background: #8b5cf6;
+      color: white;
+      font-weight: bold;
+    }
 
-        #fileInfo {
-            display: none;
-            margin-top: 20px;
-            padding: 18px;
-            border-radius: 14px;
-            background: #18181d;
-            text-align: left;
-            word-break: break-word;
-        }
+    #fileInfo {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 14px;
+      background: #18181d;
+      text-align: left;
+      word-break: break-word;
+    }
 
-        #sendButton {
-            display: none;
-            width: 100%;
-            margin-top: 15px;
-            padding: 16px;
-            border: none;
-            background: #8b5cf6;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    #sendButton {
+      display: none;
+      width: 100%;
+      margin-top: 15px;
+      padding: 16px;
 
-        #sendButton:hover {
-            background: #7c4ee8;
-        }
+      border: 0;
+      border-radius: 12px;
 
-        #sendButton:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+      background: #8b5cf6;
+      color: white;
 
-        #status {
-            margin-top: 20px;
-            color: #aaa;
-            min-height: 24px;
-        }
+      font-size: 16px;
+      font-weight: bold;
 
-        #downloadBox {
-            display: none;
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 14px;
-            background: #18181d;
-        }
+      cursor: pointer;
+    }
 
-        #downloadLink {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 13px 20px;
-            background: #22c55e;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    #sendButton:hover {
+      background: #7446d8;
+    }
 
-        .copy-button {
-            margin-top: 10px;
-            padding: 10px 15px;
-            border: 1px solid #444;
-            background: transparent;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
+    #sendButton:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #status {
+      min-height: 25px;
+      margin-top: 20px;
+      color: #aaa;
+    }
+
+    #resultBox {
+      display: none;
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 14px;
+      background: #18181d;
+    }
+
+    .code {
+      margin: 15px 0;
+      padding: 15px;
+
+      border-radius: 12px;
+      background: #0f0f12;
+
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 4px;
+    }
+
+    #downloadLink {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 13px 20px;
+
+      border-radius: 12px;
+
+      background: #22c55e;
+      color: white;
+
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .copy-button {
+      margin-top: 10px;
+      padding: 10px 15px;
+
+      border: 1px solid #444;
+      border-radius: 10px;
+
+      background: transparent;
+      color: white;
+
+      cursor: pointer;
+    }
+
+    .error {
+      color: #ef4444 !important;
+    }
+
+    .success {
+      color: #22c55e !important;
+    }
+  </style>
 </head>
 
 <body>
 
-<main class="container">
+  <main class="container">
 
     <h1>Transfer Files</h1>
 
     <p class="subtitle">
-        Envie um arquivo de um dispositivo<br>
-        e baixe em outro.
+      Envie um arquivo de um dispositivo<br>
+      e baixe exatamente o mesmo arquivo em outro.
     </p>
 
+    <!-- ÁREA DE SELEÇÃO -->
     <label class="upload-area">
 
-        <div class="upload-icon">📁</div>
+      <div class="upload-icon">
+        📁
+      </div>
 
-        <div class="upload-text">
-            Escolha um arquivo
-        </div>
+      <div class="upload-text">
+        Escolha um arquivo
+      </div>
 
-        <div class="button">
-            Selecionar arquivo
-        </div>
+      <div class="select-button">
+        Selecionar arquivo
+      </div>
 
-        <input type="file" id="fileInput">
+      <input
+        type="file"
+        id="fileInput"
+      >
 
     </label>
 
+
+    <!-- INFORMAÇÕES DO ARQUIVO -->
     <div id="fileInfo"></div>
 
+
+    <!-- BOTÃO DE ENVIO -->
     <button id="sendButton">
-        📤 Enviar arquivo
+      📤 Enviar arquivo
     </button>
 
+
+    <!-- STATUS -->
     <div id="status"></div>
 
-    <div id="downloadBox">
 
-        <strong>
-            ✅ Arquivo enviado!
-        </strong>
+    <!-- RESULTADO -->
+    <div id="resultBox">
 
-        <p>
-            Abra este link no outro dispositivo:
-        </p>
+      <strong>✅ Arquivo enviado!</strong>
 
-        <a
-            id="downloadLink"
-            href="#"
-            target="_blank"
-            rel="noopener"
-        >
-            📥 Baixar arquivo
-        </a>
+      <p>
+        Use este código no outro dispositivo:
+      </p>
 
-        <br>
+      <div
+        id="transferCode"
+        class="code">
+      </div>
 
-        <button
-            class="copy-button"
-            id="copyButton"
-        >
-            📋 Copiar link
-        </button>
+      <a
+        id="downloadLink"
+        href="#"
+        target="_blank"
+        rel="noopener">
+        📥 Baixar arquivo
+      </a>
+
+      <br>
+
+      <button
+        id="copyButton"
+        class="copy-button">
+        📋 Copiar link
+      </button>
 
     </div>
 
-</main>
+  </main>
 
-<script>
+
+  <!-- SUPABASE -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+
+
+  <script>
 
     /*
-     * =====================================================
-     * SUPABASE
-     * =====================================================
+     * ==========================================
+     * CONFIGURAÇÃO
+     * ==========================================
      */
 
     const SUPABASE_URL =
-        "https://rmplwgtizbqzmvabrbhe.supabase.co";
+      "https://rmplwgtizbqzmvabrbhe.supabase.co";
 
     const SUPABASE_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
-
-
-    const supabase =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIiwicmVmIjoicm1wbHdn dGl6YnF6bXZhYnJi aGUiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc5MDEwMjk3MiwiZXhwIjoyMTA1Njc4OTcyfQ.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw"
+        .replaceAll(" ", "");
 
 
     /*
-     * =====================================================
+     * ==========================================
      * ELEMENTOS
-     * =====================================================
+     * ==========================================
      */
 
     const fileInput =
-        document.getElementById("fileInput");
+      document.getElementById("fileInput");
 
     const fileInfo =
-        document.getElementById("fileInfo");
+      document.getElementById("fileInfo");
 
     const sendButton =
-        document.getElementById("sendButton");
+      document.getElementById("sendButton");
 
     const status =
-        document.getElementById("status");
+      document.getElementById("status");
 
-    const downloadBox =
-        document.getElementById("downloadBox");
+    const resultBox =
+      document.getElementById("resultBox");
+
+    const transferCode =
+      document.getElementById("transferCode");
 
     const downloadLink =
-        document.getElementById("downloadLink");
+      document.getElementById("downloadLink");
 
     const copyButton =
-        document.getElementById("copyButton");
+      document.getElementById("copyButton");
 
 
     let selectedFile = null;
 
 
     /*
-     * =====================================================
-     * SELECIONAR ARQUIVO
-     * =====================================================
+     * ==========================================
+     * SUPABASE
+     * ==========================================
      */
 
-    fileInput.addEventListener("change", () => {
+    let supabaseClient = null;
 
-        selectedFile =
-            fileInput.files[0];
 
-        if (!selectedFile) {
-            return;
+    function iniciarSupabase() {
+
+      try {
+
+        if (
+          typeof window.supabase === "undefined"
+        ) {
+
+          console.error(
+            "Supabase não foi carregado."
+          );
+
+          return false;
         }
 
-        fileInfo.style.display =
-            "block";
 
-        const tamanho =
-            selectedFile.size;
+        supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+          );
+
+
+        console.log(
+          "Supabase conectado."
+        );
+
+        return true;
+
+      } catch (error) {
+
+        console.error(
+          "Erro ao iniciar Supabase:",
+          error
+        );
+
+        return false;
+      }
+    }
+
+
+    iniciarSupabase();
+
+
+    /*
+     * ==========================================
+     * ESCOLHER ARQUIVO
+     * ==========================================
+     */
+
+    fileInput.addEventListener(
+      "change",
+      function () {
+
+        selectedFile =
+          fileInput.files[0];
+
+
+        if (!selectedFile) {
+
+          return;
+        }
+
+
+        /*
+         * MOSTRA AS INFORMAÇÕES
+         */
+
+        fileInfo.style.display =
+          "block";
+
+
+        let tamanho =
+          selectedFile.size;
+
 
         let tamanhoTexto;
 
-        if (tamanho < 1024 * 1024) {
 
-            tamanhoTexto =
-                (tamanho / 1024).toFixed(2)
-                + " KB";
+        if (
+          tamanho < 1024 * 1024
+        ) {
+
+          tamanhoTexto =
+            (tamanho / 1024).toFixed(2)
+            + " KB";
 
         } else {
 
-            tamanhoTexto =
-                (tamanho / 1024 / 1024).toFixed(2)
-                + " MB";
+          tamanhoTexto =
+            (tamanho / 1024 / 1024).toFixed(2)
+            + " MB";
         }
 
+
         fileInfo.innerHTML = `
-            <strong>
-                ${escapeHtml(selectedFile.name)}
-            </strong>
 
-            <br><br>
+          <strong>
+            ${escapeHtml(selectedFile.name)}
+          </strong>
 
-            Tamanho: ${tamanhoTexto}
+          <br><br>
 
-            <br>
+          Tamanho:
+          ${tamanhoTexto}
 
-            Tipo:
-            ${escapeHtml(
-                selectedFile.type ||
-                "desconhecido"
-            )}
+          <br>
+
+          Tipo:
+          ${escapeHtml(
+            selectedFile.type ||
+            "desconhecido"
+          )}
+
         `;
 
+
+        /*
+         * MOSTRA O BOTÃO
+         */
+
         sendButton.style.display =
-            "block";
+          "block";
 
-        status.textContent = "";
 
-        downloadBox.style.display =
-            "none";
-    });
+        /*
+         * LIMPA ESTADO ANTERIOR
+         */
+
+        resultBox.style.display =
+          "none";
+
+        status.textContent =
+          "Arquivo pronto para envio.";
+
+        status.className = "";
+
+      }
+    );
 
 
     /*
-     * =====================================================
-     * ENVIAR
-     * =====================================================
+     * ==========================================
+     * ENVIAR ARQUIVO
+     * ==========================================
      */
 
     sendButton.addEventListener(
-        "click",
-        async () => {
+      "click",
+      async function () {
 
-            if (!selectedFile) {
-                return;
-            }
+        if (!selectedFile) {
 
-            sendButton.disabled =
-                true;
-
-            sendButton.textContent =
-                "⏳ Enviando...";
-
-            status.textContent =
-                "Enviando arquivo...";
-
-
-            const nomeUnico =
-                crypto.randomUUID()
-                + "-"
-                + selectedFile.name;
-
-
-            try {
-
-                const resultado =
-                    await supabase.storage
-                        .from("files")
-                        .upload(
-                            nomeUnico,
-                            selectedFile,
-                            {
-                                cacheControl: "3600",
-                                upsert: false,
-                                contentType:
-                                    selectedFile.type ||
-                                    "application/octet-stream"
-                            }
-                        );
-
-
-                if (resultado.error) {
-                    throw resultado.error;
-                }
-
-
-                const publicResult =
-                    supabase.storage
-                        .from("files")
-                        .getPublicUrl(
-                            nomeUnico
-                        );
-
-
-                const publicUrl =
-                    publicResult.data.publicUrl;
-
-
-                downloadLink.href =
-                    publicUrl;
-
-
-                downloadBox.style.display =
-                    "block";
-
-
-                status.textContent =
-                    "✅ Arquivo enviado com sucesso!";
-
-
-                sendButton.textContent =
-                    "✅ Enviado";
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-                status.textContent =
-                    "❌ Erro ao enviar: "
-                    + error.message;
-
-                sendButton.disabled =
-                    false;
-
-                sendButton.textContent =
-                    "📤 Enviar arquivo";
-            }
-
+          return;
         }
+
+
+        if (!supabaseClient) {
+
+          status.textContent =
+            "❌ Supabase não foi carregado.";
+
+          status.className =
+            "error";
+
+          return;
+        }
+
+
+        sendButton.disabled =
+          true;
+
+        sendButton.textContent =
+          "⏳ Enviando...";
+
+        status.textContent =
+          "Enviando arquivo...";
+
+        status.className = "";
+
+
+        try {
+
+          /*
+           * GERA UM ID ÚNICO
+           */
+
+          const id =
+            crypto.randomUUID();
+
+
+          /*
+           * NOME DO ARQUIVO NO STORAGE
+           */
+
+          const caminho =
+            id +
+            "/" +
+            selectedFile.name;
+
+
+          console.log(
+            "Enviando:",
+            caminho
+          );
+
+
+          /*
+           * ENVIA OS BYTES ORIGINAIS
+           *
+           * O arquivo não é convertido.
+           * Não é comprimido.
+           * Não é redimensionado.
+           */
+
+          const resultado =
+            await supabaseClient
+              .storage
+              .from("files")
+              .upload(
+                caminho,
+                selectedFile,
+                {
+                  cacheControl: "3600",
+
+                  upsert: false,
+
+                  contentType:
+                    selectedFile.type ||
+                    "application/octet-stream"
+                }
+              );
+
+
+          if (resultado.error) {
+
+            throw resultado.error;
+          }
+
+
+          /*
+           * GERA LINK TEMPORÁRIO
+           *
+           * Válido por 1 hora.
+           */
+
+          const signed =
+            await supabaseClient
+              .storage
+              .from("files")
+              .createSignedUrl(
+                caminho,
+                3600
+              );
+
+
+          if (signed.error) {
+
+            throw signed.error;
+          }
+
+
+          const url =
+            signed.data.signedUrl;
+
+
+          /*
+           * CRIA CÓDIGO
+           */
+
+          const codigo =
+            id.substring(0, 8)
+              .toUpperCase();
+
+
+          transferCode.textContent =
+            codigo;
+
+
+          downloadLink.href =
+            url;
+
+
+          resultBox.style.display =
+            "block";
+
+
+          status.textContent =
+            "✅ Arquivo enviado com sucesso!";
+
+          status.className =
+            "success";
+
+
+          sendButton.textContent =
+            "✅ Enviado";
+
+
+          console.log(
+            "Arquivo enviado:",
+            caminho
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Erro no envio:",
+            error
+          );
+
+
+          status.textContent =
+            "❌ Erro ao enviar: " +
+            (
+              error.message ||
+              "Erro desconhecido"
+            );
+
+          status.className =
+            "error";
+
+
+          sendButton.disabled =
+            false;
+
+          sendButton.textContent =
+            "📤 Enviar arquivo";
+        }
+
+      }
     );
 
 
     /*
-     * =====================================================
+     * ==========================================
      * COPIAR LINK
-     * =====================================================
+     * ==========================================
      */
 
     copyButton.addEventListener(
-        "click",
-        async () => {
+      "click",
+      async function () {
 
-            try {
+        try {
 
-                await navigator.clipboard.writeText(
-                    downloadLink.href
-                );
+          await navigator.clipboard.writeText(
+            downloadLink.href
+          );
 
-                copyButton.textContent =
-                    "✅ Link copiado!";
 
-                setTimeout(() => {
+          copyButton.textContent =
+            "✅ Link copiado!";
 
-                    copyButton.textContent =
-                        "📋 Copiar link";
 
-                }, 2000);
+          setTimeout(
+            function () {
 
-            }
+              copyButton.textContent =
+                "📋 Copiar link";
 
-            catch {
+            },
+            2000
+          );
 
-                alert(
-                    "Não foi possível copiar o link."
-                );
-            }
+
+        } catch (error) {
+
+          alert(
+            "Não foi possível copiar o link."
+          );
 
         }
+
+      }
     );
 
 
     /*
-     * =====================================================
-     * SEGURANÇA DO NOME DO ARQUIVO
-     * =====================================================
+     * ==========================================
+     * SEGURANÇA DO NOME
+     * ==========================================
      */
 
     function escapeHtml(text) {
 
-        const div =
-            document.createElement("div");
+      const div =
+        document.createElement("div");
 
-        div.textContent =
-            text;
+      div.textContent =
+        text;
 
-        return div.innerHTML;
+      return div.innerHTML;
     }
 
-</script>
+
+    /*
+     * ==========================================
+     * TESTE
+     * ==========================================
+     */
+
+    console.log(
+      "Transfer Files carregado."
+    );
+
+  </script>
 
 </body>
 </html>
