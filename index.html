@@ -1,1783 +1,914 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transfer Files</title>
 
-
-  <!--
-    Biblioteca do Supabase
-  -->
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
-
-
-  <!--
-    Biblioteca para gerar QR Code
-  -->
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
-  </script>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
 
-
     body {
-
       margin: 0;
-
       min-height: 100vh;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      padding: 20px;
-
-      background: #0f0f12;
-
+      font-family: Arial, sans-serif;
+      background: #0d0d0d;
       color: white;
-
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
     }
-
 
     .container {
-
       width: 100%;
-
-      max-width: 520px;
-
-      text-align: center;
-
+      max-width: 650px;
     }
-
 
     h1 {
-
-      margin: 0;
-
-      font-size: 42px;
-
+      text-align: center;
+      margin-bottom: 30px;
     }
 
-
-    .subtitle {
-
-      margin:
-        12px
-        0
-        30px;
-
-      color: #999;
-
-      line-height: 1.5;
-
-    }
-
-
-    .upload-area {
-
-      display: block;
-
-      padding:
-        45px
-        20px;
-
-      border:
-        2px
-        dashed
-        #444;
-
-      border-radius: 20px;
-
-      cursor: pointer;
-
-      transition: 0.2s;
-
-    }
-
-
-    .upload-area:hover {
-
-      border-color:
-        #8b5cf6;
-
-      background:
-        #15151b;
-
-    }
-
-
-    .upload-icon {
-
-      font-size: 55px;
-
-      margin-bottom: 15px;
-
-    }
-
-
-    .upload-text {
-
-      margin-bottom: 20px;
-
-      font-size: 18px;
-
-      font-weight: bold;
-
-    }
-
-
-    .select-button {
-
-      display:
-        inline-block;
-
-      padding:
-        14px
-        25px;
-
-      border-radius: 12px;
-
-      background:
-        #8b5cf6;
-
-      font-weight: bold;
-
-    }
-
-
-    input[type="file"] {
-
-      display: none;
-
-    }
-
-
-    #fileInfo {
-
-      display: none;
-
-      margin-top: 20px;
-
-      padding: 18px;
-
-      border-radius: 14px;
-
-      background: #18181d;
-
-      text-align: left;
-
-      word-break: break-word;
-
-    }
-
-
-    #sendButton {
-
-      display: none;
-
-      width: 100%;
-
-      margin-top: 15px;
-
-      padding: 16px;
-
-      border: 0;
-
-      border-radius: 12px;
-
-      background: #8b5cf6;
-
-      color: white;
-
-      font-size: 16px;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-    }
-
-
-    #sendButton:hover {
-
-      background:
-        #7446d8;
-
-    }
-
-
-    #sendButton:disabled {
-
-      opacity: 0.6;
-
-      cursor: not-allowed;
-
-    }
-
-
-    #status {
-
-      min-height: 25px;
-
-      margin-top: 20px;
-
-      color: #aaa;
-
-    }
-
-
-    .success {
-
-      color:
-        #22c55e !important;
-
-    }
-
-
-    .error {
-
-      color:
-        #ef4444 !important;
-
-    }
-
-
-    .panel {
-
-      margin-top: 25px;
-
-      padding: 20px;
-
+    .box {
+      background: #171717;
+      border: 1px solid #292929;
       border-radius: 16px;
-
-      background:
-        #18181d;
-
+      padding: 22px;
+      margin-bottom: 20px;
     }
 
-
-    #resultBox {
-
-      display: none;
-
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
     }
 
+    input[type="file"],
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: #0d0d0d;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .info {
+      margin-top: 15px;
+      padding: 15px;
+      background: #101010;
+      border-radius: 10px;
+      word-break: break-word;
+    }
 
     .code {
-
-      margin:
-        15px
-        0;
-
-      padding: 15px;
-
-      border-radius: 12px;
-
-      background:
-        #0f0f12;
-
       font-size: 30px;
-
       font-weight: bold;
-
+      text-align: center;
       letter-spacing: 5px;
-
-      user-select: all;
-
+      margin: 15px 0;
     }
-
 
     #qrcode {
-
-      width: 230px;
-
-      height: 230px;
-
-      margin:
-        20px
-        auto;
-
-      padding: 10px;
-
-      background: white;
-
-      border-radius: 12px;
-
       display: flex;
-
-      align-items: center;
-
       justify-content: center;
-
-    }
-
-
-    #qrcode img {
-
-      display: block;
-
-      margin: auto;
-
-    }
-
-
-    .download-button {
-
-      width: 100%;
-
-      margin-top: 10px;
-
-      padding: 14px;
-
-      border: 0;
-
-      border-radius: 12px;
-
-      background:
-        #22c55e;
-
-      color: white;
-
-      font-size: 16px;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-    }
-
-
-    .download-button:hover {
-
-      background:
-        #16a34a;
-
-    }
-
-
-    .download-button:disabled {
-
-      opacity: 0.6;
-
-      cursor: not-allowed;
-
-    }
-
-
-    .copy-button {
-
-      width: 100%;
-
-      margin-top: 10px;
-
-      padding: 12px;
-
-      border:
-        1px
-        solid
-        #444;
-
+      margin: 20px 0;
+      background: white;
+      padding: 15px;
       border-radius: 10px;
-
-      background:
-        transparent;
-
-      color: white;
-
-      cursor: pointer;
-
     }
 
-
-    .divider {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 10px;
-
-      margin:
-        30px
-        0;
-
-      color: #666;
-
+    #qrcode img,
+    #qrcode canvas {
+      max-width: 100%;
+      height: auto;
     }
 
-
-    .divider::before,
-    .divider::after {
-
-      content: "";
-
-      flex: 1;
-
-      height: 1px;
-
-      background: #333;
-
-    }
-
-
-    .code-input {
-
-      width: 100%;
-
+    .preview {
+      margin-top: 20px;
       padding: 15px;
-
-      border:
-        1px
-        solid
-        #444;
-
+      background: #0b0b0b;
+      border: 1px solid #292929;
       border-radius: 12px;
-
-      outline: none;
-
-      background:
-        #0f0f12;
-
-      color: white;
-
       text-align: center;
+      overflow: hidden;
+    }
 
-      font-size: 20px;
-
+    .preview-title {
       font-weight: bold;
-
-      letter-spacing: 4px;
-
-      text-transform: uppercase;
-
+      margin-bottom: 12px;
     }
 
-
-    .code-input:focus {
-
-      border-color:
-        #8b5cf6;
-
+    .preview img {
+      max-width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      border-radius: 8px;
     }
 
-
-    .find-button {
-
+    .preview iframe {
       width: 100%;
-
-      margin-top: 10px;
-
-      padding: 15px;
-
+      height: 500px;
       border: 0;
-
-      border-radius: 12px;
-
-      background:
-        #8b5cf6;
-
-      color: white;
-
-      font-size: 16px;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
+      border-radius: 8px;
+      background: white;
     }
 
-
-    .find-button:disabled {
-
-      opacity: 0.6;
-
-      cursor: not-allowed;
-
+    .preview video {
+      width: 100%;
+      max-height: 500px;
+      border-radius: 8px;
     }
 
-
-    #foundBox {
-
-      display: none;
-
+    .preview audio {
+      width: 100%;
     }
 
-
-    .file-name {
-
-      font-size: 18px;
-
-      font-weight: bold;
-
+    .preview pre {
+      text-align: left;
+      white-space: pre-wrap;
       word-break: break-word;
-
+      max-height: 500px;
+      overflow: auto;
+      padding: 15px;
+      background: #050505;
+      border-radius: 8px;
     }
 
+    .download {
+      margin-top: 15px;
+    }
 
-    .file-details {
-
+    .secondary {
       margin-top: 10px;
-
-      color: #999;
-
-      line-height: 1.6;
-
+      background: #292929;
+      color: white;
     }
 
+    .hidden {
+      display: none;
+    }
+
+    .error {
+      color: #ff7070;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: #72ff9a;
+      margin-top: 10px;
+    }
   </style>
-
 </head>
-
 
 <body>
 
+  <div class="container">
 
-  <main class="container">
+    <h1>📁 Transfer Files</h1>
 
+    <!-- ENVIAR -->
+    <div class="box">
+      <h2>Enviar arquivo</h2>
 
-    <h1>
-      Transfer Files
-    </h1>
+      <input type="file" id="fileInput">
 
+      <div id="senderPreview" class="preview hidden"></div>
 
-    <p class="subtitle">
-
-      Envie um arquivo de um dispositivo<br>
-
-      e baixe exatamente o mesmo arquivo em outro.
-
-    </p>
-
-
-    <!--
-      ==========================================
-      ENVIAR
-      ==========================================
-    -->
-
-
-    <label class="upload-area">
-
-      <div class="upload-icon">
-        📁
-      </div>
-
-
-      <div class="upload-text">
-        Escolha um arquivo
-      </div>
-
-
-      <div class="select-button">
-        Selecionar arquivo
-      </div>
-
-
-      <input
-        type="file"
-        id="fileInput">
-
-    </label>
-
-
-    <div id="fileInfo"></div>
-
-
-    <button
-      id="sendButton">
-
-      📤 Enviar arquivo
-
-    </button>
-
-
-    <div id="status"></div>
-
-
-    <!--
-      ==========================================
-      RESULTADO DO ENVIO
-      ==========================================
-    -->
-
-
-    <div
-      id="resultBox"
-      class="panel">
-
-
-      <strong>
-        ✅ Arquivo enviado!
-      </strong>
-
-
-      <p>
-        Escaneie este QR Code no outro dispositivo:
-      </p>
-
-
-      <div id="qrcode"></div>
-
-
-      <p>
-        Ou digite este código:
-      </p>
-
-
-      <div
-        id="transferCode"
-        class="code">
-      </div>
-
-
-      <button
-        id="copyLinkButton"
-        class="copy-button">
-
-        🔗 Copiar link de transferência
-
+      <button onclick="enviarArquivo()">
+        Enviar arquivo
       </button>
 
-
+      <div id="uploadResult"></div>
     </div>
 
 
-    <!--
-      ==========================================
-      ENCONTRAR ARQUIVO
-      ==========================================
-    -->
-
-
-    <div class="divider">
-      ou
-    </div>
-
-
-    <div class="panel">
-
-
-      <strong>
-        📥 Receber arquivo
-      </strong>
-
-
-      <p>
-        Digite o código recebido:
-      </p>
-
+    <!-- RECEBER -->
+    <div class="box">
+      <h2>Receber arquivo</h2>
 
       <input
+        type="text"
         id="codeInput"
-        class="code-input"
         maxlength="8"
-        placeholder="XXXXXXXX"
-        autocomplete="off">
+        placeholder="Digite o código"
+      >
 
-
-      <button
-        id="findButton"
-        class="find-button">
-
-        🔍 Encontrar arquivo
-
+      <button onclick="buscarArquivo()">
+        Encontrar arquivo
       </button>
 
-
+      <div id="foundBox"></div>
     </div>
 
+  </div>
 
-    <div
-      id="foundBox"
-      class="panel">
 
+<script>
 
-      <div class="file-name"
-        id="foundFileName">
-      </div>
+  const SUPABASE_URL = "https://rmplwgtizbqzmvabrbhe.supabase.co";
 
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
 
-      <div
-        class="file-details"
-        id="foundFileDetails">
-      </div>
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-      <button
-        id="downloadFoundButton"
-        class="download-button">
+  let selectedFile = null;
+  let localPreviewUrl = null;
 
-        📥 Baixar arquivo
 
-      </button>
+  /*
+    =====================================================
+    PRÉ-VISUALIZAÇÃO DO ARQUIVO SELECIONADO
+    =====================================================
+  */
 
+  document
+    .getElementById("fileInput")
+    .addEventListener("change", function () {
 
-    </div>
+      selectedFile = this.files[0];
 
-
-  </main>
-
-
-  <script>
-
-
-    /*
-     * ==========================================
-     * SUPABASE
-     * ==========================================
-     */
-
-
-    const SUPABASE_URL =
-      "https://rmplwgtizbqzmvabrbhe.supabase.co";
-
-
-    const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
-
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-
-    /*
-     * ==========================================
-     * ELEMENTOS
-     * ==========================================
-     */
-
-
-    const fileInput =
-      document.getElementById(
-        "fileInput"
-      );
-
-
-    const fileInfo =
-      document.getElementById(
-        "fileInfo"
-      );
-
-
-    const sendButton =
-      document.getElementById(
-        "sendButton"
-      );
-
-
-    const status =
-      document.getElementById(
-        "status"
-      );
-
-
-    const resultBox =
-      document.getElementById(
-        "resultBox"
-      );
-
-
-    const transferCode =
-      document.getElementById(
-        "transferCode"
-      );
-
-
-    const qrcode =
-      document.getElementById(
-        "qrcode"
-      );
-
-
-    const copyLinkButton =
-      document.getElementById(
-        "copyLinkButton"
-      );
-
-
-    const codeInput =
-      document.getElementById(
-        "codeInput"
-      );
-
-
-    const findButton =
-      document.getElementById(
-        "findButton"
-      );
-
-
-    const foundBox =
-      document.getElementById(
-        "foundBox"
-      );
-
-
-    const foundFileName =
-      document.getElementById(
-        "foundFileName"
-      );
-
-
-    const foundFileDetails =
-      document.getElementById(
-        "foundFileDetails"
-      );
-
-
-    const downloadFoundButton =
-      document.getElementById(
-        "downloadFoundButton"
-      );
-
-
-    let selectedFile = null;
-
-    let downloadUrl = null;
-
-    let originalFileName = null;
-
-    let currentTransferLink = null;
-
-    let foundDownloadUrl = null;
-
-    let foundFileNameValue = null;
-
-
-    /*
-     * ==========================================
-     * TAMANHO
-     * ==========================================
-     */
-
-
-    function formatSize(size) {
-
-      if (size < 1024) {
-
-        return size + " B";
-
+      if (!selectedFile) {
+        return;
       }
 
-
-      if (
-        size <
-        1024 * 1024
-      ) {
-
-        return (
-          size / 1024
-        ).toFixed(2) + " KB";
-
-      }
+      mostrarPreviewLocal(selectedFile);
+    });
 
 
-      if (
-        size <
-        1024 * 1024 * 1024
-      ) {
+  function mostrarPreviewLocal(file) {
 
-        return (
-          size /
-          1024 /
-          1024
-        ).toFixed(2) + " MB";
+    const container = document.getElementById("senderPreview");
 
-      }
+    if (localPreviewUrl) {
+      URL.revokeObjectURL(localPreviewUrl);
+      localPreviewUrl = null;
+    }
+
+    container.innerHTML = "";
+    container.classList.remove("hidden");
+
+    const titulo = document.createElement("div");
+    titulo.className = "preview-title";
+    titulo.textContent = "Pré-visualização";
+
+    container.appendChild(titulo);
+
+    localPreviewUrl = URL.createObjectURL(file);
+
+    criarElementoPreview(
+      container,
+      localPreviewUrl,
+      file.type,
+      file.name
+    );
+  }
 
 
-      return (
-        size /
-        1024 /
-        1024 /
-        1024
-      ).toFixed(2) + " GB";
+  /*
+    =====================================================
+    CRIA O PREVIEW
+    =====================================================
+  */
 
+  function criarElementoPreview(container, url, type, fileName) {
+
+    /*
+      IMAGENS
+      Inclui PNG, JPG, GIF, WEBP, SVG, BMP etc.
+    */
+
+    if (type.startsWith("image/")) {
+
+      const img = document.createElement("img");
+
+      img.src = url;
+      img.alt = fileName;
+
+      container.appendChild(img);
+
+      return;
     }
 
 
     /*
-     * ==========================================
-     * SELECIONAR ARQUIVO
-     * ==========================================
-     */
+      PDF
+    */
 
+    if (type === "application/pdf") {
 
-    fileInput.addEventListener(
-      "change",
-      function () {
+      const iframe = document.createElement("iframe");
 
-        selectedFile =
-          fileInput.files[0];
+      iframe.src = url;
+      iframe.title = fileName;
 
+      container.appendChild(iframe);
 
-        if (!selectedFile) {
-          return;
-        }
-
-
-        fileInfo.innerHTML = `
-
-          <strong>
-            ${escapeHtml(
-              selectedFile.name
-            )}
-          </strong>
-
-          <br><br>
-
-          Tamanho:
-          ${formatSize(
-            selectedFile.size
-          )}
-
-          <br>
-
-          Tipo:
-          ${escapeHtml(
-            selectedFile.type ||
-            "desconhecido"
-          )}
-
-        `;
-
-
-        fileInfo.style.display =
-          "block";
-
-
-        sendButton.style.display =
-          "block";
-
-
-        sendButton.disabled =
-          false;
-
-
-        sendButton.textContent =
-          "📤 Enviar arquivo";
-
-
-        resultBox.style.display =
-          "none";
-
-
-        status.textContent =
-          "Arquivo pronto para envio.";
-
-        status.className = "";
-
-      }
-    );
+      return;
+    }
 
 
     /*
-     * ==========================================
-     * ENVIAR
-     * ==========================================
-     */
+      VÍDEO
+    */
 
+    if (type.startsWith("video/")) {
 
-    sendButton.addEventListener(
-      "click",
-      async function () {
+      const video = document.createElement("video");
 
+      video.src = url;
+      video.controls = true;
 
-        if (!selectedFile) {
-          return;
-        }
+      container.appendChild(video);
 
+      return;
+    }
 
-        sendButton.disabled =
-          true;
 
+    /*
+      ÁUDIO
+    */
 
-        sendButton.textContent =
-          "⏳ Enviando...";
+    if (type.startsWith("audio/")) {
 
+      const audio = document.createElement("audio");
 
-        status.textContent =
-          "Enviando arquivo...";
+      audio.src = url;
+      audio.controls = true;
 
-        status.className = "";
+      container.appendChild(audio);
 
+      return;
+    }
 
-        try {
 
+    /*
+      ARQUIVOS DE TEXTO
+    */
 
-          /*
-           * ID
-           */
+    if (
+      type === "text/plain" ||
+      type === "text/csv"
+    ) {
 
+      const pre = document.createElement("pre");
 
-          const id =
-            crypto.randomUUID();
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
 
+          pre.textContent = text;
 
-          /*
-           * CÓDIGO
-           */
+        })
+        .catch(() => {
 
+          pre.textContent =
+            "Não foi possível visualizar este arquivo.";
 
-          const codigo =
-            id
-              .replaceAll("-", "")
-              .substring(0, 8)
-              .toUpperCase();
+        });
 
+      container.appendChild(pre);
 
-          /*
-           * CAMINHO
-           */
+      return;
+    }
 
 
-          const caminho =
-            id +
-            "/" +
-            selectedFile.name;
+    /*
+      FORMATO NÃO SUPORTADO PELO NAVEGADOR
+    */
 
+    const mensagem = document.createElement("div");
 
-          console.log(
-            "Enviando:",
-            caminho
-          );
+    mensagem.style.padding = "30px 10px";
+    mensagem.innerHTML = `
+      👁️ <strong>Prévia não disponível</strong>
+      <br><br>
+      Este tipo de arquivo precisa ser baixado
+      para ser aberto.
+    `;
 
+    container.appendChild(mensagem);
+  }
 
-          /*
-           * UPLOAD
-           */
 
+  /*
+    =====================================================
+    ENVIAR ARQUIVO
+    =====================================================
+  */
 
-          const upload =
-            await supabaseClient
-              .storage
-              .from("files")
-              .upload(
-                caminho,
-                selectedFile,
-                {
-                  cacheControl:
-                    "3600",
+  async function enviarArquivo() {
 
-                  upsert:
-                    false,
+    const result = document.getElementById("uploadResult");
 
-                  contentType:
-                    selectedFile.type ||
-                    "application/octet-stream"
-                }
-              );
+    result.innerHTML = "";
 
+    if (!selectedFile) {
 
-          if (upload.error) {
+      result.innerHTML =
+        '<div class="error">Selecione um arquivo primeiro.</div>';
 
-            throw upload.error;
+      return;
+    }
 
-          }
 
+    result.innerHTML =
+      '<div>Enviando arquivo...</div>';
 
-          /*
-           * SALVA INFORMAÇÕES
-           * NA TABELA
-           */
 
+    try {
 
-          const database =
-            await supabaseClient
-              .from("transfers")
-              .insert({
+      /*
+        ID único para o arquivo
+      */
 
-                code:
-                  codigo,
+      const id = crypto.randomUUID();
 
-                file_path:
-                  caminho,
 
-                file_name:
-                  selectedFile.name,
+      /*
+        Mantém o nome original
+      */
 
-                file_type:
-                  selectedFile.type ||
-                  "application/octet-stream",
+      const filePath =
+        id + "/" + selectedFile.name;
 
-                file_size:
-                  selectedFile.size
 
-              });
+      /*
+        Envia o arquivo original.
+        Nenhuma conversão ou compressão é feita.
+      */
 
-
-          if (database.error) {
-
-            throw database.error;
-
-          }
-
-
-          /*
-           * LINK DA PÁGINA
-           */
-
-
-          const pageUrl =
-            window.location.origin +
-            window.location.pathname +
-            "?code=" +
-            codigo;
-
-
-          currentTransferLink =
-            pageUrl;
-
-
-          originalFileName =
-            selectedFile.name;
-
-
-          /*
-           * MOSTRA CÓDIGO
-           */
-
-
-          transferCode.textContent =
-            codigo;
-
-
-          /*
-           * LIMPA QR ANTERIOR
-           */
-
-
-          qrcode.innerHTML =
-            "";
-
-
-          /*
-           * GERA QR
-           */
-
-
-          new QRCode(
-            qrcode,
+      const { error: uploadError } =
+        await supabaseClient.storage
+          .from("files")
+          .upload(
+            filePath,
+            selectedFile,
             {
-              text:
-                pageUrl,
+              contentType:
+                selectedFile.type ||
+                "application/octet-stream",
 
-              width:
-                210,
-
-              height:
-                210,
-
-              correctLevel:
-                QRCode.CorrectLevel.M
+              upsert: false
             }
           );
 
 
-          /*
-           * MOSTRA RESULTADO
-           */
-
-
-          resultBox.style.display =
-            "block";
-
-
-          status.textContent =
-            "✅ Arquivo enviado com sucesso!";
-
-
-          status.className =
-            "success";
-
-
-          sendButton.textContent =
-            "✅ Enviado";
-
-
-          console.log(
-            "Código:",
-            codigo
-          );
-
-
-          console.log(
-            "Link:",
-            pageUrl
-          );
-
-
-        } catch (error) {
-
-
-          console.error(
-            "Erro:",
-            error
-          );
-
-
-          status.textContent =
-            "❌ " +
-            (
-              error.message ||
-              "Erro desconhecido"
-            );
-
-
-          status.className =
-            "error";
-
-
-          sendButton.disabled =
-            false;
-
-
-          sendButton.textContent =
-            "📤 Enviar arquivo";
-
-        }
-
+      if (uploadError) {
+        throw uploadError;
       }
-    );
 
 
-    /*
-     * ==========================================
-     * COPIAR LINK
-     * ==========================================
-     */
-
-
-    copyLinkButton.addEventListener(
-      "click",
-      async function () {
-
-
-        if (!currentTransferLink) {
-          return;
-        }
-
-
-        try {
-
-
-          await navigator.clipboard.writeText(
-            currentTransferLink
-          );
-
-
-          copyLinkButton.textContent =
-            "✅ Link copiado!";
-
-
-          setTimeout(
-            function () {
-
-              copyLinkButton.textContent =
-                "🔗 Copiar link";
-
-            },
-            2000
-          );
-
-
-        } catch (error) {
-
-
-          alert(
-            "Não foi possível copiar."
-          );
-
-        }
-
-      }
-    );
-
-
-    /*
-     * ==========================================
-     * ENCONTRAR POR CÓDIGO
-     * ==========================================
-     */
-
-
-    findButton.addEventListener(
-      "click",
-      encontrarArquivo
-    );
-
-
-    /*
-     * ENTER NO CAMPO
-     */
-
-
-    codeInput.addEventListener(
-      "keydown",
-      function (event) {
-
-        if (
-          event.key === "Enter"
-        ) {
-
-          encontrarArquivo();
-
-        }
-
-      }
-    );
-
-
-    /*
-     * ==========================================
-     * FUNÇÃO ENCONTRAR
-     * ==========================================
-     */
-
-
-    async function encontrarArquivo() {
-
+      /*
+        Cria código de 8 caracteres
+      */
 
       const codigo =
-        codeInput.value
-          .trim()
+        id
+          .replace(/-/g, "")
+          .substring(0, 8)
           .toUpperCase();
 
 
-      if (!codigo) {
+      /*
+        Salva informações no banco
+      */
+
+      const { error: databaseError } =
+        await supabaseClient
+          .from("transfers")
+          .insert({
+            code: codigo,
+            file_path: filePath,
+            file_name: selectedFile.name,
+            file_type:
+              selectedFile.type ||
+              "application/octet-stream",
+            file_size: selectedFile.size
+          });
 
 
-        status.textContent =
-          "Digite um código.";
+      if (databaseError) {
+        throw databaseError;
+      }
 
-        status.className =
-          "error";
 
+      /*
+        Link que será usado pelo QR Code
+      */
+
+      const pageUrl =
+        window.location.origin +
+        window.location.pathname +
+        "?code=" +
+        codigo;
+
+
+      /*
+        Mostra resultado
+      */
+
+      result.innerHTML = `
+        <div class="info">
+
+          <div class="success">
+            Arquivo enviado com sucesso!
+          </div>
+
+          <div style="margin-top:12px">
+            Código:
+          </div>
+
+          <div class="code">
+            ${codigo}
+          </div>
+
+          <div id="qrcode"></div>
+
+          <button
+            class="secondary"
+            onclick="copiarCodigo('${codigo}')"
+          >
+            Copiar código
+          </button>
+
+        </div>
+      `;
+
+
+      /*
+        Gera QR Code
+      */
+
+      new QRCode(
+        document.getElementById("qrcode"),
+        {
+          text: pageUrl,
+          width: 220,
+          height: 220
+        }
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      result.innerHTML = `
+        <div class="error">
+          Erro ao enviar arquivo:
+          <br>
+          ${error.message}
+        </div>
+      `;
+    }
+  }
+
+
+  /*
+    =====================================================
+    BUSCAR ARQUIVO
+    =====================================================
+  */
+
+  async function buscarArquivo() {
+
+    const codigo =
+      document
+        .getElementById("codeInput")
+        .value
+        .trim()
+        .toUpperCase();
+
+
+    const foundBox =
+      document.getElementById("foundBox");
+
+
+    foundBox.innerHTML =
+      "<div>Procurando arquivo...</div>";
+
+
+    if (!codigo) {
+
+      foundBox.innerHTML =
+        '<div class="error">Digite um código.</div>';
+
+      return;
+    }
+
+
+    try {
+
+      /*
+        Procura o código no banco
+      */
+
+      const { data, error } =
+        await supabaseClient
+          .from("transfers")
+          .select("*")
+          .eq("code", codigo)
+          .single();
+
+
+      if (error || !data) {
+
+        foundBox.innerHTML =
+          '<div class="error">Arquivo não encontrado.</div>';
 
         return;
-
       }
 
 
-      findButton.disabled =
-        true;
+      /*
+        Cria URL temporária para o arquivo.
+        Ela funciona durante 24 horas.
+      */
 
-
-      findButton.textContent =
-        "⏳ Procurando...";
-
-
-      foundBox.style.display =
-        "none";
-
-
-      status.textContent =
-        "Procurando arquivo...";
-
-      status.className = "";
-
-
-      try {
-
-
-        /*
-         * BUSCA NO BANCO
-         */
-
-
-        const resultado =
-          await supabaseClient
-            .from("transfers")
-            .select(
-              "file_path,file_name,file_type,file_size"
-            )
-            .eq(
-              "code",
-              codigo
-            )
-            .maybeSingle();
-
-
-        if (resultado.error) {
-
-          throw resultado.error;
-
-        }
-
-
-        if (!resultado.data) {
-
-          throw new Error(
-            "Código não encontrado."
+      const { data: signedData, error: signedError } =
+        await supabaseClient.storage
+          .from("files")
+          .createSignedUrl(
+            data.file_path,
+            86400
           );
 
-        }
+
+      if (signedError) {
+        throw signedError;
+      }
 
 
-        const arquivo =
-          resultado.data;
+      const signedUrl =
+        signedData.signedUrl;
 
 
-        /*
-         * GERA LINK TEMPORÁRIO
-         */
+      /*
+        Mostra informações
+      */
 
+      foundBox.innerHTML = `
+        <div class="info">
 
-        const signed =
-          await supabaseClient
-            .storage
-            .from("files")
-            .createSignedUrl(
-              arquivo.file_path,
-              86400
-            );
+          <strong>${escapeHtml(data.file_name)}</strong>
 
-
-        if (signed.error) {
-
-          throw signed.error;
-
-        }
-
-
-        foundDownloadUrl =
-          signed.data.signedUrl;
-
-
-        foundFileNameValue =
-          arquivo.file_name;
-
-
-        /*
-         * MOSTRA INFORMAÇÕES
-         */
-
-
-        foundFileName.textContent =
-          "📄 " +
-          arquivo.file_name;
-
-
-        foundFileDetails.innerHTML = `
+          <br><br>
 
           Tamanho:
-          ${formatSize(
-            arquivo.file_size || 0
-          )}
+          ${formatBytes(data.file_size)}
 
+          <div
+            id="remotePreview"
+            class="preview"
+          >
+            <div class="preview-title">
+              Pré-visualização
+            </div>
+          </div>
+
+          <button
+            class="download"
+            onclick="baixarArquivo(
+              '${escapeAttribute(signedUrl)}',
+              '${escapeAttribute(data.file_name)}'
+            )"
+          >
+            ⬇️ Baixar arquivo
+          </button>
+
+        </div>
+      `;
+
+
+      /*
+        Cria o preview usando a URL do Supabase
+      */
+
+      const preview =
+        document.getElementById("remotePreview");
+
+
+      criarElementoPreview(
+        preview,
+        signedUrl,
+        data.file_type || "",
+        data.file_name
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      foundBox.innerHTML = `
+        <div class="error">
+          Erro ao encontrar arquivo:
           <br>
-
-          Tipo:
-          ${escapeHtml(
-            arquivo.file_type ||
-            "desconhecido"
-          )}
-
-        `;
+          ${error.message}
+        </div>
+      `;
+    }
+  }
 
 
-        foundBox.style.display =
-          "block";
+  /*
+    =====================================================
+    DOWNLOAD
+    =====================================================
+  */
+
+  async function baixarArquivo(url, fileName) {
+
+    try {
+
+      const response =
+        await fetch(url);
 
 
-        status.textContent =
-          "✅ Arquivo encontrado!";
-
-        status.className =
-          "success";
-
-
-      } catch (error) {
-
-
-        console.error(
-          "Erro:",
-          error
-        );
-
-
-        status.textContent =
-          "❌ " +
-          (
-            error.message ||
-            "Erro desconhecido"
-          );
-
-
-        status.className =
-          "error";
-
+      if (!response.ok) {
+        throw new Error("Falha no download.");
       }
 
 
-      findButton.disabled =
-        false;
+      const blob =
+        await response.blob();
 
 
-      findButton.textContent =
-        "🔍 Encontrar arquivo";
+      const blobUrl =
+        URL.createObjectURL(blob);
+
+
+      const link =
+        document.createElement("a");
+
+
+      link.href = blobUrl;
+      link.download = fileName;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      URL.revokeObjectURL(blobUrl);
 
     }
 
+    catch (error) {
 
-    /*
-     * ==========================================
-     * DOWNLOAD DO ARQUIVO ENCONTRADO
-     * ==========================================
-     */
+      console.error(error);
 
+      /*
+        Se o navegador bloquear o download automático,
+        abre o arquivo normalmente.
+      */
 
-    downloadFoundButton.addEventListener(
-      "click",
-      async function () {
+      window.open(url, "_blank");
+    }
+  }
 
 
-        if (!foundDownloadUrl) {
-          return;
-        }
+  /*
+    =====================================================
+    COPIAR CÓDIGO
+    =====================================================
+  */
 
+  function copiarCodigo(codigo) {
 
-        downloadFoundButton.disabled =
-          true;
+    navigator.clipboard
+      .writeText(codigo)
+      .then(() => {
 
+        alert("Código copiado!");
 
-        downloadFoundButton.textContent =
-          "⏳ Baixando...";
+      });
+  }
 
 
-        try {
+  /*
+    =====================================================
+    TAMANHO DO ARQUIVO
+    =====================================================
+  */
 
+  function formatBytes(bytes) {
 
-          /*
-           * PEGA OS BYTES
-           */
-
-
-          const resposta =
-            await fetch(
-              foundDownloadUrl
-            );
-
-
-          if (!resposta.ok) {
-
-            throw new Error(
-              "Falha no download."
-            );
-
-          }
-
-
-          const blob =
-            await resposta.blob();
-
-
-          /*
-           * DOWNLOAD LOCAL
-           */
-
-
-          const blobUrl =
-            URL.createObjectURL(
-              blob
-            );
-
-
-          const link =
-            document.createElement(
-              "a"
-            );
-
-
-          link.href =
-            blobUrl;
-
-
-          link.download =
-            foundFileNameValue ||
-            "arquivo";
-
-
-          document.body.appendChild(
-            link
-          );
-
-
-          link.click();
-
-
-          link.remove();
-
-
-          setTimeout(
-            function () {
-
-              URL.revokeObjectURL(
-                blobUrl
-              );
-
-            },
-            1000
-          );
-
-
-          downloadFoundButton.textContent =
-            "✅ Baixado!";
-
-
-        } catch (error) {
-
-
-          console.error(
-            "Erro no download:",
-            error
-          );
-
-
-          window.open(
-            foundDownloadUrl,
-            "_blank"
-          );
-
-
-          downloadFoundButton.textContent =
-            "📥 Baixar arquivo";
-
-        }
-
-
-        setTimeout(
-          function () {
-
-            downloadFoundButton.disabled =
-              false;
-
-            downloadFoundButton.textContent =
-              "📥 Baixar arquivo";
-
-          },
-          2000
-        );
-
-      }
-    );
-
-
-    /*
-     * ==========================================
-     * QR AUTOMÁTICO
-     *
-     * Se abrir:
-     *
-     * site.com/?code=ABCDEFGH
-     *
-     * o campo já recebe o código.
-     * ==========================================
-     */
-
-
-    window.addEventListener(
-      "DOMContentLoaded",
-      function () {
-
-
-        const parametros =
-          new URLSearchParams(
-            window.location.search
-          );
-
-
-        const codigo =
-          parametros.get(
-            "code"
-          );
-
-
-        if (codigo) {
-
-
-          codeInput.value =
-            codigo.toUpperCase();
-
-
-          /*
-           * Pequeno atraso para
-           * deixar a página carregar.
-           */
-
-
-          setTimeout(
-            function () {
-
-              encontrarArquivo();
-
-            },
-            500
-          );
-
-        }
-
-      }
-    );
-
-
-    /*
-     * ==========================================
-     * SEGURANÇA
-     * ==========================================
-     */
-
-
-    function escapeHtml(text) {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.textContent =
-        text;
-
-
-      return div.innerHTML;
-
+    if (!bytes) {
+      return "0 B";
     }
 
+    const units = [
+      "B",
+      "KB",
+      "MB",
+      "GB",
+      "TB"
+    ];
 
-    console.log(
-      "Transfer Files iniciado."
+    const index =
+      Math.floor(
+        Math.log(bytes) /
+        Math.log(1024)
+      );
+
+    return (
+      parseFloat(
+        (bytes / Math.pow(1024, index))
+          .toFixed(2)
+      )
+      + " "
+      + units[index]
+    );
+  }
+
+
+  /*
+    =====================================================
+    SEGURANÇA BÁSICA PARA TEXTO HTML
+    =====================================================
+  */
+
+  function escapeHtml(text) {
+
+    const div =
+      document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+  }
+
+
+  function escapeAttribute(text) {
+
+    return String(text)
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
+  }
+
+
+  /*
+    =====================================================
+    ABRIR AUTOMATICAMENTE PELO QR CODE
+    =====================================================
+  */
+
+  const params =
+    new URLSearchParams(
+      window.location.search
     );
 
-  </script>
+
+  const codigoUrl =
+    params.get("code");
+
+
+  if (codigoUrl) {
+
+    document
+      .getElementById("codeInput")
+      .value =
+        codigoUrl.toUpperCase();
+
+
+    setTimeout(() => {
+
+      buscarArquivo();
+
+    }, 500);
+  }
+
+</script>
 
 </body>
-
 </html>
