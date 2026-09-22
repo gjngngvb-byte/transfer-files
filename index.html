@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -19,28 +20,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
-
-            font-family: Arial, sans-serif;
+            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
             background: #0f0f12;
             color: white;
         }
 
         .container {
-            width: min(90%, 520px);
+            width: 100%;
+            max-width: 520px;
             text-align: center;
         }
 
         h1 {
+            margin: 0;
             font-size: 42px;
-            margin-bottom: 10px;
         }
 
-        p {
+        .subtitle {
+            margin: 12px 0 35px;
             color: #999;
-            margin-bottom: 30px;
+            line-height: 1.5;
         }
 
-        .upload {
+        .upload-area {
             display: block;
             border: 2px dashed #444;
             border-radius: 20px;
@@ -49,135 +52,451 @@
             transition: 0.2s;
         }
 
-        .upload:hover {
+        .upload-area:hover {
             border-color: #8b5cf6;
             background: #15151b;
         }
 
-        .upload span {
-            display: block;
-            font-size: 50px;
+        .upload-icon {
+            font-size: 55px;
             margin-bottom: 15px;
         }
 
-        input {
+        .upload-text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
             display: none;
+        }
+
+        .button,
+        #sendButton,
+        #downloadLink,
+        .copy-button {
+            border-radius: 12px;
         }
 
         .button {
             display: inline-block;
             margin-top: 20px;
             padding: 14px 25px;
-            border-radius: 12px;
             background: #8b5cf6;
             color: white;
             font-weight: bold;
         }
 
-        .file {
-            margin-top: 25px;
-            padding: 20px;
-            background: #18181d;
-            border-radius: 12px;
+        #fileInfo {
             display: none;
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 14px;
+            background: #18181d;
+            text-align: left;
+            word-break: break-word;
         }
 
-        .status {
+        #sendButton {
+            display: none;
+            width: 100%;
+            margin-top: 15px;
+            padding: 16px;
+            border: none;
+            background: #8b5cf6;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #sendButton:hover {
+            background: #7c4ee8;
+        }
+
+        #sendButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #status {
             margin-top: 20px;
             color: #aaa;
+            min-height: 24px;
+        }
+
+        #downloadBox {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 14px;
+            background: #18181d;
+        }
+
+        #downloadLink {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 13px 20px;
+            background: #22c55e;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .copy-button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border: 1px solid #444;
+            background: transparent;
+            color: white;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
 
-    <main class="container">
+<main class="container">
 
-        <h1>Transfer Files</h1>
+    <h1>Transfer Files</h1>
+
+    <p class="subtitle">
+        Envie um arquivo de um dispositivo<br>
+        e baixe em outro.
+    </p>
+
+    <label class="upload-area">
+
+        <div class="upload-icon">📁</div>
+
+        <div class="upload-text">
+            Escolha um arquivo
+        </div>
+
+        <div class="button">
+            Selecionar arquivo
+        </div>
+
+        <input type="file" id="fileInput">
+
+    </label>
+
+    <div id="fileInfo"></div>
+
+    <button id="sendButton">
+        📤 Enviar arquivo
+    </button>
+
+    <div id="status"></div>
+
+    <div id="downloadBox">
+
+        <strong>
+            ✅ Arquivo enviado!
+        </strong>
 
         <p>
-            Transfira arquivos entre seus dispositivos.
+            Abra este link no outro dispositivo:
         </p>
 
-        <label class="upload">
+        <a
+            id="downloadLink"
+            href="#"
+            target="_blank"
+            rel="noopener"
+        >
+            📥 Baixar arquivo
+        </a>
 
-            <span>📁</span>
+        <br>
 
-            <strong>Escolha um arquivo</strong>
+        <button
+            class="copy-button"
+            id="copyButton"
+        >
+            📋 Copiar link
+        </button>
 
-            <div class="button">
-                Selecionar arquivo
-            </div>
+    </div>
 
-            <input type="file" id="fileInput">
+</main>
 
-        </label>
+<script>
 
-        <div class="file" id="fileInfo"></div>
+    /*
+     * =====================================================
+     * SUPABASE
+     * =====================================================
+     */
 
-        <div class="status" id="status"></div>
+    const SUPABASE_URL =
+        "https://rmplwgtizbqzmvabrbhe.supabase.co";
 
-    </main>
+    const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
 
-    <script>
 
-        const SUPABASE_URL =
-            "https://rmplwgtizbqzmvabrbhe.supabase.co/rest/v1/";
-
-        const SUPABASE_KEY =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
-
-        const supabase = window.supabase.createClient(
+    const supabase =
+        window.supabase.createClient(
             SUPABASE_URL,
             SUPABASE_KEY
         );
 
-        const input = document.getElementById("fileInput");
-        const fileInfo = document.getElementById("fileInfo");
-        const status = document.getElementById("status");
 
-        input.addEventListener("change", async () => {
+    /*
+     * =====================================================
+     * ELEMENTOS
+     * =====================================================
+     */
 
-            const file = input.files[0];
+    const fileInput =
+        document.getElementById("fileInput");
 
-            if (!file) return;
+    const fileInfo =
+        document.getElementById("fileInfo");
 
-            fileInfo.style.display = "block";
+    const sendButton =
+        document.getElementById("sendButton");
 
-            fileInfo.innerHTML = `
-                <strong>${file.name}</strong>
-                <br>
-                ${(file.size / 1024 / 1024).toFixed(2)} MB
-            `;
+    const status =
+        document.getElementById("status");
 
-            status.textContent = "Enviando arquivo...";
+    const downloadBox =
+        document.getElementById("downloadBox");
+
+    const downloadLink =
+        document.getElementById("downloadLink");
+
+    const copyButton =
+        document.getElementById("copyButton");
+
+
+    let selectedFile = null;
+
+
+    /*
+     * =====================================================
+     * SELECIONAR ARQUIVO
+     * =====================================================
+     */
+
+    fileInput.addEventListener("change", () => {
+
+        selectedFile =
+            fileInput.files[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        fileInfo.style.display =
+            "block";
+
+        const tamanho =
+            selectedFile.size;
+
+        let tamanhoTexto;
+
+        if (tamanho < 1024 * 1024) {
+
+            tamanhoTexto =
+                (tamanho / 1024).toFixed(2)
+                + " KB";
+
+        } else {
+
+            tamanhoTexto =
+                (tamanho / 1024 / 1024).toFixed(2)
+                + " MB";
+        }
+
+        fileInfo.innerHTML = `
+            <strong>
+                ${escapeHtml(selectedFile.name)}
+            </strong>
+
+            <br><br>
+
+            Tamanho: ${tamanhoTexto}
+
+            <br>
+
+            Tipo:
+            ${escapeHtml(
+                selectedFile.type ||
+                "desconhecido"
+            )}
+        `;
+
+        sendButton.style.display =
+            "block";
+
+        status.textContent = "";
+
+        downloadBox.style.display =
+            "none";
+    });
+
+
+    /*
+     * =====================================================
+     * ENVIAR
+     * =====================================================
+     */
+
+    sendButton.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedFile) {
+                return;
+            }
+
+            sendButton.disabled =
+                true;
+
+            sendButton.textContent =
+                "⏳ Enviando...";
+
+            status.textContent =
+                "Enviando arquivo...";
+
 
             const nomeUnico =
-                crypto.randomUUID() + "-" + file.name;
+                crypto.randomUUID()
+                + "-"
+                + selectedFile.name;
 
-            const { data, error } =
-                await supabase.storage
-                    .from("files")
-                    .upload(nomeUnico, file);
 
-            if (error) {
+            try {
+
+                const resultado =
+                    await supabase.storage
+                        .from("files")
+                        .upload(
+                            nomeUnico,
+                            selectedFile,
+                            {
+                                cacheControl: "3600",
+                                upsert: false,
+                                contentType:
+                                    selectedFile.type ||
+                                    "application/octet-stream"
+                            }
+                        );
+
+
+                if (resultado.error) {
+                    throw resultado.error;
+                }
+
+
+                const publicResult =
+                    supabase.storage
+                        .from("files")
+                        .getPublicUrl(
+                            nomeUnico
+                        );
+
+
+                const publicUrl =
+                    publicResult.data.publicUrl;
+
+
+                downloadLink.href =
+                    publicUrl;
+
+
+                downloadBox.style.display =
+                    "block";
+
+
+                status.textContent =
+                    "✅ Arquivo enviado com sucesso!";
+
+
+                sendButton.textContent =
+                    "✅ Enviado";
+
+            }
+
+            catch (error) {
 
                 console.error(error);
 
                 status.textContent =
-                    "Erro ao enviar: " + error.message;
+                    "❌ Erro ao enviar: "
+                    + error.message;
 
-                return;
+                sendButton.disabled =
+                    false;
+
+                sendButton.textContent =
+                    "📤 Enviar arquivo";
             }
 
-            status.textContent =
-                "Arquivo enviado com sucesso!";
+        }
+    );
 
-            console.log(data);
 
-        });
+    /*
+     * =====================================================
+     * COPIAR LINK
+     * =====================================================
+     */
 
-    </script>
+    copyButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    downloadLink.href
+                );
+
+                copyButton.textContent =
+                    "✅ Link copiado!";
+
+                setTimeout(() => {
+
+                    copyButton.textContent =
+                        "📋 Copiar link";
+
+                }, 2000);
+
+            }
+
+            catch {
+
+                alert(
+                    "Não foi possível copiar o link."
+                );
+            }
+
+        }
+    );
+
+
+    /*
+     * =====================================================
+     * SEGURANÇA DO NOME DO ARQUIVO
+     * =====================================================
+     */
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            text;
+
+        return div.innerHTML;
+    }
+
+</script>
 
 </body>
 </html>
+```
