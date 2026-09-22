@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,132 +14,408 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --bg: #08090c;
+      --card: rgba(18, 20, 26, 0.82);
+      --card-light: #151820;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f5f7fa;
+      --muted: #8c929f;
+      --accent: #7c5cff;
+      --accent-hover: #8d70ff;
+      --green: #55d98a;
+      --red: #ff6b6b;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: white;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(124, 92, 255, 0.20),
+          transparent 38%
+        ),
+        var(--bg);
+
+      color: var(--text);
       display: flex;
       justify-content: center;
-      padding: 30px 15px;
+      padding: 55px 18px;
     }
 
     .container {
       width: 100%;
-      max-width: 650px;
+      max-width: 720px;
+    }
+
+    /* LOGO / TÍTULO */
+
+    header {
+      text-align: center;
+      margin-bottom: 38px;
+    }
+
+    .logo {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 18px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 17px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #8d72ff,
+          #6242e8
+        );
+
+      box-shadow:
+        0 12px 35px rgba(124, 92, 255, 0.25);
+
+      font-size: 27px;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 30px;
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -1px;
+      font-weight: 750;
     }
 
+    .subtitle {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* CARDS */
+
     .box {
-      background: #171717;
-      border: 1px solid #292929;
-      border-radius: 16px;
-      padding: 22px;
+      position: relative;
+
+      background: var(--card);
+
+      border: 1px solid var(--border);
+
+      border-radius: 22px;
+
+      padding: 26px;
+
+      margin-bottom: 18px;
+
+      backdrop-filter: blur(18px);
+
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .box h2 {
+      margin: 0 0 7px;
+
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .description {
+      color: var(--muted);
+      font-size: 13px;
       margin-bottom: 20px;
     }
 
-    h2 {
-      margin-top: 0;
-      font-size: 20px;
+    /* INPUT FILE */
+
+    input[type="file"] {
+      width: 100%;
+
+      padding: 18px;
+
+      border-radius: 15px;
+
+      border: 1px dashed rgba(255,255,255,0.16);
+
+      background: rgba(255,255,255,0.025);
+
+      color: var(--muted);
+
+      cursor: pointer;
+
+      transition: 0.2s;
     }
 
-    input[type="file"],
+    input[type="file"]:hover {
+      border-color: rgba(124, 92, 255, 0.6);
+      background: rgba(124, 92, 255, 0.05);
+    }
+
     input[type="text"] {
       width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #0d0d0d;
+
+      padding: 17px 18px;
+
+      border-radius: 14px;
+
+      border: 1px solid var(--border);
+
+      background: #0c0e13;
+
       color: white;
+
+      font-size: 18px;
+
+      letter-spacing: 3px;
+
+      text-align: center;
+
+      outline: none;
+
+      transition: 0.2s;
+
       margin-bottom: 12px;
     }
 
+    input[type="text"]:focus {
+      border-color: var(--accent);
+
+      box-shadow:
+        0 0 0 3px rgba(124,92,255,0.12);
+    }
+
+    input::placeholder {
+      color: #555b66;
+      letter-spacing: 1px;
+    }
+
+    /* BOTÕES */
+
     button {
       width: 100%;
-      padding: 14px;
+
+      padding: 15px 18px;
+
       border: 0;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #000;
-      font-weight: bold;
+
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          #6546df
+        );
+
+      color: white;
+
+      font-weight: 700;
+
       cursor: pointer;
-      font-size: 15px;
+
+      font-size: 14px;
+
+      transition:
+        transform 0.15s,
+        box-shadow 0.15s,
+        opacity 0.15s;
+
+      box-shadow:
+        0 8px 25px rgba(124,92,255,0.18);
     }
 
     button:hover {
-      opacity: 0.85;
+      transform: translateY(-1px);
+
+      box-shadow:
+        0 12px 30px rgba(124,92,255,0.28);
     }
 
+    button:active {
+      transform: translateY(0);
+    }
+
+    .secondary {
+      margin-top: 10px;
+
+      background: #20232c;
+
+      color: #e7e9ee;
+
+      box-shadow: none;
+    }
+
+    .secondary:hover {
+      background: #282c36;
+      box-shadow: none;
+    }
+
+    /* INFO */
+
     .info {
-      margin-top: 15px;
-      padding: 15px;
-      background: #101010;
-      border-radius: 10px;
+      margin-top: 18px;
+
+      padding: 18px;
+
+      background: #0c0e13;
+
+      border: 1px solid var(--border);
+
+      border-radius: 15px;
+
       word-break: break-word;
     }
 
-    .code {
-      font-size: 30px;
-      font-weight: bold;
-      text-align: center;
-      letter-spacing: 5px;
-      margin: 15px 0;
+    .info strong {
+      font-size: 15px;
     }
+
+    .code {
+      margin: 15px 0;
+
+      padding: 17px;
+
+      text-align: center;
+
+      font-size: 30px;
+
+      font-weight: 800;
+
+      letter-spacing: 7px;
+
+      color: white;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(124,92,255,0.13),
+          rgba(124,92,255,0.03)
+        );
+
+      border: 1px solid rgba(124,92,255,0.2);
+
+      border-radius: 14px;
+    }
+
+    /* QR CODE */
 
     #qrcode {
       display: flex;
+
       justify-content: center;
-      margin: 20px 0;
+
+      align-items: center;
+
+      width: fit-content;
+
+      margin: 22px auto;
+
+      padding: 13px;
+
       background: white;
-      padding: 15px;
-      border-radius: 10px;
+
+      border-radius: 15px;
+
+      box-shadow:
+        0 12px 30px rgba(0,0,0,0.3);
     }
 
     #qrcode img,
     #qrcode canvas {
+      display: block;
+
       max-width: 100%;
       height: auto;
     }
 
+    /* PREVIEW */
+
     .preview {
       margin-top: 20px;
-      padding: 15px;
-      background: #0b0b0b;
-      border: 1px solid #292929;
-      border-radius: 12px;
+
+      padding: 14px;
+
+      background: #080a0e;
+
+      border: 1px solid var(--border);
+
+      border-radius: 16px;
+
       text-align: center;
+
       overflow: hidden;
     }
 
     .preview-title {
-      font-weight: bold;
-      margin-bottom: 12px;
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 7px;
+
+      margin-bottom: 13px;
+
+      color: #b9bec8;
+
+      font-size: 12px;
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+      font-weight: 700;
     }
 
     .preview img {
+      display: block;
+
       max-width: 100%;
+
       max-height: 500px;
+
+      margin: auto;
+
       object-fit: contain;
-      border-radius: 8px;
+
+      border-radius: 10px;
     }
 
     .preview iframe {
+      display: block;
+
       width: 100%;
+
       height: 500px;
+
       border: 0;
-      border-radius: 8px;
+
+      border-radius: 10px;
+
       background: white;
     }
 
     .preview video {
+      display: block;
+
       width: 100%;
+
       max-height: 500px;
-      border-radius: 8px;
+
+      margin: auto;
+
+      border-radius: 10px;
+
+      background: black;
     }
 
     .preview audio {
@@ -147,37 +424,86 @@
 
     .preview pre {
       text-align: left;
+
       white-space: pre-wrap;
+
       word-break: break-word;
+
       max-height: 500px;
+
       overflow: auto;
-      padding: 15px;
-      background: #050505;
-      border-radius: 8px;
+
+      padding: 16px;
+
+      margin: 0;
+
+      background: #050608;
+
+      border-radius: 10px;
+
+      color: #d9dde5;
+
+      font-size: 13px;
+
+      line-height: 1.55;
     }
 
-    .download {
-      margin-top: 15px;
+    /* STATUS */
+
+    .success {
+      color: var(--green);
+
+      display: flex;
+      align-items: center;
+
+      gap: 7px;
+
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .secondary {
-      margin-top: 10px;
-      background: #292929;
-      color: white;
+    .error {
+      color: var(--red);
+
+      margin-top: 12px;
+
+      font-size: 13px;
     }
 
     .hidden {
       display: none;
     }
 
-    .error {
-      color: #ff7070;
-      margin-top: 10px;
-    }
+    /* MOBILE */
 
-    .success {
-      color: #72ff9a;
-      margin-top: 10px;
+    @media (max-width: 600px) {
+
+      body {
+        padding: 30px 12px;
+      }
+
+      header {
+        margin-bottom: 25px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .box {
+        padding: 20px;
+
+        border-radius: 18px;
+      }
+
+      .code {
+        font-size: 24px;
+        letter-spacing: 5px;
+      }
+
+      .preview iframe {
+        height: 400px;
+      }
     }
   </style>
 </head>
@@ -186,33 +512,65 @@
 
   <div class="container">
 
-    <h1>📁 Transfer Files</h1>
+    <header>
+
+      <div class="logo">
+        📁
+      </div>
+
+      <h1>Transfer Files</h1>
+
+      <div class="subtitle">
+        Envie arquivos de um dispositivo para outro
+      </div>
+
+    </header>
+
 
     <!-- ENVIAR -->
+
     <div class="box">
+
       <h2>Enviar arquivo</h2>
 
-      <input type="file" id="fileInput">
+      <div class="description">
+        Selecione um arquivo para gerar um código de transferência.
+      </div>
 
-      <div id="senderPreview" class="preview hidden"></div>
+      <input
+        type="file"
+        id="fileInput"
+      >
+
+      <div
+        id="senderPreview"
+        class="preview hidden"
+      ></div>
 
       <button onclick="enviarArquivo()">
         Enviar arquivo
       </button>
 
       <div id="uploadResult"></div>
+
     </div>
 
 
     <!-- RECEBER -->
+
     <div class="box">
+
       <h2>Receber arquivo</h2>
+
+      <div class="description">
+        Digite o código recebido ou abra o link do QR Code.
+      </div>
 
       <input
         type="text"
         id="codeInput"
         maxlength="8"
-        placeholder="Digite o código"
+        placeholder="CÓDIGO"
       >
 
       <button onclick="buscarArquivo()">
@@ -220,6 +578,7 @@
       </button>
 
       <div id="foundBox"></div>
+
     </div>
 
   </div>
@@ -229,7 +588,12 @@
 
   const SUPABASE_URL = "https://rmplwgtizbqzmvabrbhe.supabase.co";
 
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcGx3Z3RpemJxem12YWJyYmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDI5NzIsImV4cCI6MjEwNTY3ODk3Mn0.1Y23eINegprxaFa-HtttbJZsMgrT-Wmq1heTT54YaCw";
+  /*
+    MANTENHA A MESMA SUPABASE_KEY
+    QUE JÁ ESTÁ FUNCIONANDO NO SEU ARQUIVO ATUAL.
+  */
+
+  const SUPABASE_KEY = "SUA_CHAVE_ANON_PUBLIC_AQUI";
 
   const supabaseClient = supabase.createClient(
     SUPABASE_URL,
@@ -263,23 +627,32 @@
 
   function mostrarPreviewLocal(file) {
 
-    const container = document.getElementById("senderPreview");
+    const container =
+      document.getElementById("senderPreview");
 
     if (localPreviewUrl) {
+
       URL.revokeObjectURL(localPreviewUrl);
+
       localPreviewUrl = null;
     }
 
     container.innerHTML = "";
+
     container.classList.remove("hidden");
 
-    const titulo = document.createElement("div");
+    const titulo =
+      document.createElement("div");
+
     titulo.className = "preview-title";
-    titulo.textContent = "Pré-visualização";
+
+    titulo.innerHTML =
+      "👁️ Pré-visualização";
 
     container.appendChild(titulo);
 
-    localPreviewUrl = URL.createObjectURL(file);
+    localPreviewUrl =
+      URL.createObjectURL(file);
 
     criarElementoPreview(
       container,
@@ -296,16 +669,17 @@
     =====================================================
   */
 
-  function criarElementoPreview(container, url, type, fileName) {
-
-    /*
-      IMAGENS
-      Inclui PNG, JPG, GIF, WEBP, SVG, BMP etc.
-    */
+  function criarElementoPreview(
+    container,
+    url,
+    type,
+    fileName
+  ) {
 
     if (type.startsWith("image/")) {
 
-      const img = document.createElement("img");
+      const img =
+        document.createElement("img");
 
       img.src = url;
       img.alt = fileName;
@@ -316,13 +690,10 @@
     }
 
 
-    /*
-      PDF
-    */
-
     if (type === "application/pdf") {
 
-      const iframe = document.createElement("iframe");
+      const iframe =
+        document.createElement("iframe");
 
       iframe.src = url;
       iframe.title = fileName;
@@ -333,13 +704,10 @@
     }
 
 
-    /*
-      VÍDEO
-    */
-
     if (type.startsWith("video/")) {
 
-      const video = document.createElement("video");
+      const video =
+        document.createElement("video");
 
       video.src = url;
       video.controls = true;
@@ -350,13 +718,10 @@
     }
 
 
-    /*
-      ÁUDIO
-    */
-
     if (type.startsWith("audio/")) {
 
-      const audio = document.createElement("audio");
+      const audio =
+        document.createElement("audio");
 
       audio.src = url;
       audio.controls = true;
@@ -367,16 +732,13 @@
     }
 
 
-    /*
-      ARQUIVOS DE TEXTO
-    */
-
     if (
       type === "text/plain" ||
       type === "text/csv"
     ) {
 
-      const pre = document.createElement("pre");
+      const pre =
+        document.createElement("pre");
 
       fetch(url)
         .then(response => response.text())
@@ -398,16 +760,24 @@
     }
 
 
-    /*
-      FORMATO NÃO SUPORTADO PELO NAVEGADOR
-    */
-
-    const mensagem = document.createElement("div");
+    const mensagem =
+      document.createElement("div");
 
     mensagem.style.padding = "30px 10px";
+
+    mensagem.style.color = "#8c929f";
+
     mensagem.innerHTML = `
-      👁️ <strong>Prévia não disponível</strong>
+      <div style="font-size:28px;margin-bottom:10px">
+        📦
+      </div>
+
+      <strong style="color:#e7e9ee">
+        Prévia não disponível
+      </strong>
+
       <br><br>
+
       Este tipo de arquivo precisa ser baixado
       para ser aberto.
     `;
@@ -424,7 +794,8 @@
 
   async function enviarArquivo() {
 
-    const result = document.getElementById("uploadResult");
+    const result =
+      document.getElementById("uploadResult");
 
     result.innerHTML = "";
 
@@ -436,34 +807,22 @@
       return;
     }
 
-
     result.innerHTML =
-      '<div>Enviando arquivo...</div>';
+      '<div style="margin-top:14px;color:#8c929f">Enviando arquivo...</div>';
 
 
     try {
 
-      /*
-        ID único para o arquivo
-      */
-
-      const id = crypto.randomUUID();
-
-
-      /*
-        Mantém o nome original
-      */
+      const id =
+        crypto.randomUUID();
 
       const filePath =
         id + "/" + selectedFile.name;
 
 
-      /*
-        Envia o arquivo original.
-        Nenhuma conversão ou compressão é feita.
-      */
-
-      const { error: uploadError } =
+      const {
+        error: uploadError
+      } =
         await supabaseClient.storage
           .from("files")
           .upload(
@@ -484,10 +843,6 @@
       }
 
 
-      /*
-        Cria código de 8 caracteres
-      */
-
       const codigo =
         id
           .replace(/-/g, "")
@@ -495,11 +850,9 @@
           .toUpperCase();
 
 
-      /*
-        Salva informações no banco
-      */
-
-      const { error: databaseError } =
+      const {
+        error: databaseError
+      } =
         await supabaseClient
           .from("transfers")
           .insert({
@@ -518,10 +871,6 @@
       }
 
 
-      /*
-        Link que será usado pelo QR Code
-      */
-
       const pageUrl =
         window.location.origin +
         window.location.pathname +
@@ -529,19 +878,24 @@
         codigo;
 
 
-      /*
-        Mostra resultado
-      */
-
       result.innerHTML = `
+
         <div class="info">
 
           <div class="success">
-            Arquivo enviado com sucesso!
+            ✓ Arquivo enviado com sucesso
           </div>
 
-          <div style="margin-top:12px">
-            Código:
+          <div
+            style="
+              margin-top:18px;
+              color:#8c929f;
+              font-size:12px;
+              text-transform:uppercase;
+              letter-spacing:1px;
+            "
+          >
+            Código de transferência
           </div>
 
           <div class="code">
@@ -560,10 +914,6 @@
         </div>
       `;
 
-
-      /*
-        Gera QR Code
-      */
 
       new QRCode(
         document.getElementById("qrcode"),
@@ -612,7 +962,7 @@
 
 
     foundBox.innerHTML =
-      "<div>Procurando arquivo...</div>";
+      '<div style="margin-top:14px;color:#8c929f">Procurando arquivo...</div>';
 
 
     if (!codigo) {
@@ -626,11 +976,10 @@
 
     try {
 
-      /*
-        Procura o código no banco
-      */
-
-      const { data, error } =
+      const {
+        data,
+        error
+      } =
         await supabaseClient
           .from("transfers")
           .select("*")
@@ -647,12 +996,10 @@
       }
 
 
-      /*
-        Cria URL temporária para o arquivo.
-        Ela funciona durante 24 horas.
-      */
-
-      const { data: signedData, error: signedError } =
+      const {
+        data: signedData,
+        error: signedError
+      } =
         await supabaseClient.storage
           .from("files")
           .createSignedUrl(
@@ -670,27 +1017,33 @@
         signedData.signedUrl;
 
 
-      /*
-        Mostra informações
-      */
-
       foundBox.innerHTML = `
+
         <div class="info">
 
-          <strong>${escapeHtml(data.file_name)}</strong>
+          <strong>
+            ${escapeHtml(data.file_name)}
+          </strong>
 
-          <br><br>
-
-          Tamanho:
-          ${formatBytes(data.file_size)}
+          <div
+            style="
+              margin-top:7px;
+              color:#777e8a;
+              font-size:12px;
+            "
+          >
+            ${formatBytes(data.file_size)}
+          </div>
 
           <div
             id="remotePreview"
             class="preview"
           >
+
             <div class="preview-title">
-              Pré-visualização
+              👁️ Pré-visualização
             </div>
+
           </div>
 
           <button
@@ -707,12 +1060,10 @@
       `;
 
 
-      /*
-        Cria o preview usando a URL do Supabase
-      */
-
       const preview =
-        document.getElementById("remotePreview");
+        document.getElementById(
+          "remotePreview"
+        );
 
 
       criarElementoPreview(
@@ -745,7 +1096,10 @@
     =====================================================
   */
 
-  async function baixarArquivo(url, fileName) {
+  async function baixarArquivo(
+    url,
+    fileName
+  ) {
 
     try {
 
@@ -771,6 +1125,7 @@
 
 
       link.href = blobUrl;
+
       link.download = fileName;
 
       document.body.appendChild(link);
@@ -787,12 +1142,10 @@
 
       console.error(error);
 
-      /*
-        Se o navegador bloquear o download automático,
-        abre o arquivo normalmente.
-      */
-
-      window.open(url, "_blank");
+      window.open(
+        url,
+        "_blank"
+      );
     }
   }
 
@@ -817,7 +1170,7 @@
 
   /*
     =====================================================
-    TAMANHO DO ARQUIVO
+    TAMANHO
     =====================================================
   */
 
@@ -843,8 +1196,10 @@
 
     return (
       parseFloat(
-        (bytes / Math.pow(1024, index))
-          .toFixed(2)
+        (
+          bytes /
+          Math.pow(1024, index)
+        ).toFixed(2)
       )
       + " "
       + units[index]
@@ -854,7 +1209,7 @@
 
   /*
     =====================================================
-    SEGURANÇA BÁSICA PARA TEXTO HTML
+    SEGURANÇA
     =====================================================
   */
 
@@ -879,7 +1234,7 @@
 
   /*
     =====================================================
-    ABRIR AUTOMATICAMENTE PELO QR CODE
+    QR CODE AUTOMÁTICO
     =====================================================
   */
 
@@ -912,3 +1267,4 @@
 
 </body>
 </html>
+```
