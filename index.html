@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transfer Files</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+            background: #0f0f12;
+            color: white;
+        }
+
+        .container {
+            width: min(90%, 500px);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #999;
+            margin-bottom: 35px;
+        }
+
+        .upload {
+            border: 2px dashed #444;
+            border-radius: 20px;
+            padding: 50px 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload:hover {
+            border-color: #8b5cf6;
+            background: #15151b;
+        }
+
+        .upload span {
+            display: block;
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            display: none;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 14px 25px;
+            border-radius: 12px;
+            background: #8b5cf6;
+            color: white;
+            font-weight: bold;
+        }
+
+        .file {
+            margin-top: 25px;
+            padding: 15px;
+            background: #18181d;
+            border-radius: 12px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Transfer Files</h1>
+
+        <p>
+            Envie um arquivo de um dispositivo e baixe em outro.
+        </p>
+
+        <label class="upload">
+
+            <span>📁</span>
+
+            <strong>Escolha um arquivo</strong>
+
+            <div class="button">
+                Selecionar arquivo
+            </div>
+
+            <input type="file" id="fileInput">
+
+        </label>
+
+        <div class="file" id="fileInfo"></div>
+
+    </main>
+
+    <script>
+        const input = document.getElementById("fileInput");
+        const fileInfo = document.getElementById("fileInfo");
+
+        input.addEventListener("change", () => {
+
+            const file = input.files[0];
+
+            if (!file) return;
+
+            fileInfo.style.display = "block";
+
+            fileInfo.innerHTML = `
+                <strong>${file.name}</strong>
+                <br>
+                ${(file.size / 1024 / 1024).toFixed(2)} MB
+            `;
+        });
+    </script>
+
+</body>
+</html>
